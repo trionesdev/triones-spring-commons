@@ -5,8 +5,8 @@
   <name>Triones:Spring:Commons</name>
 
   <modules>
-    <module>triones-commons-core-spring</module>
-    <module>triones-commons-security-spring</module>
+    <module>triones-spring-core</module>
+    <module>triones-spring-security</module>
   </modules>
   <groupId>com.trionesdev.commons</groupId>
   <artifactId>triones-spring-commons</artifactId>
@@ -31,12 +31,18 @@
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
-        <version>5.9.2</version>
+        <version>5.10.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
         <version>${spring.version}</version>
         <scope>provided</scope>
       </dependency>
@@ -200,12 +206,12 @@
 
       <dependency>
         <groupId>com.trionesdev.commons</groupId>
-        <artifactId>triones-commons-core-spring</artifactId>
+        <artifactId>triones-spring-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.trionesdev.commons</groupId>
-        <artifactId>triones-commons-security-spring</artifactId>
+        <artifactId>triones-spring-security</artifactId>
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
