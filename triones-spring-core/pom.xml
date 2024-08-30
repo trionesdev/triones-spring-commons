@@ -39,6 +39,10 @@
             <artifactId>triones-commons-exception</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.trionesdev.commons</groupId>
+            <artifactId>triones-commons-lock</artifactId>
+        </dependency>
+        <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
