@@ -46,6 +46,7 @@ public class OperationAuditAspect extends ActEventAspect {
             }
         }
         OperationAuditContext operationAuditContext = new OperationAuditContext();
+        operationAuditContext.setType(operationAudit.type());
         operationAuditContext.setDescription(operationAudit.description());
         operationAuditContext.setArgs(mapArgs(joinPoint, methodSignature));
         operationAuditContext.setBeforeValue(process.before(operationAuditContext.getArgs()));

@@ -16,5 +16,6 @@ public class OperationAuditContext {
     private Map<String, Object> args;
     private Map<String, Object> beforeValue;
     private Map<String, Object> afterValue;
+    private String type;
     private String description;
 }
