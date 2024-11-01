@@ -1,7 +1,5 @@
 package com.trionesdev.spring.core.audit;
 
-import org.intellij.lang.annotations.Language;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -13,12 +11,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface AuditLog {
+public @interface OperationAudit {
     String description() default "";
 
-    @Language(value = "SpEL")
-    String before() default "";
-
-    @Language(value = "SpEL")
-    String after() default "";
+    Class<?> process() default Void.class;
 }

@@ -5,13 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Map;
+
 @Data
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Audit {
-    private Object beforeValue;
-    private Object afterValue;
-    private String compareDescription;
+public class OperationAuditContext {
+    private Boolean success;
+    private Map<String, Object> args;
+    private Map<String, Object> beforeValue;
+    private Map<String, Object> afterValue;
     private String description;
 }
