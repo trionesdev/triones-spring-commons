@@ -14,6 +14,8 @@ import java.lang.annotation.Target;
 public @interface OperationAudit {
     String type() default "";
 
+    String action() default "";
+
     String description() default "";
 
     Class<?> process() default Void.class;
