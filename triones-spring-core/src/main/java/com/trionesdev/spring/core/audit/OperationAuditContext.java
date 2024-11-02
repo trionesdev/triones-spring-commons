@@ -13,7 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OperationAuditContext {
-    private Boolean success;
     private Map<String, Object> args;
     private Map<String, Object> beforeValue;
     private Map<String, Object> afterValue;
@@ -22,4 +21,6 @@ public class OperationAuditContext {
     private String description;
     private Instant startAt;
     private Instant endAt;
+    private Boolean success;
+    private String errorMsg;
 }

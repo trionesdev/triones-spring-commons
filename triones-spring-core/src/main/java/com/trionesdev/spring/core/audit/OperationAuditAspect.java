@@ -57,6 +57,7 @@ public class OperationAuditAspect extends ActEventAspect {
             operationAuditContext.setSuccess(true);
         } catch (Throwable e) {
             operationAuditContext.setSuccess(false);
+            operationAuditContext.setErrorMsg(e.getMessage());
             throw e;
         } finally {
             operationAuditContext.setEndAt(Instant.now());
