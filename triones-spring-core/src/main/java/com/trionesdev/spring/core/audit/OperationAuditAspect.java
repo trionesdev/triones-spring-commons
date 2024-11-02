@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import java.time.Instant;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -33,19 +34,17 @@ public class OperationAuditAspect extends ActEventAspect {
     }
 
     @Around(value = "auditLogAround()")
-    public Object around(ProceedingJoinPoint joinPoint) {
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        Instant startAt = Instant.now();
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         OperationAudit operationAudit = AnnotationUtils.getAnnotation(methodSignature.getMethod(), OperationAudit.class);
         OperationAuditProcess process = Objects.isNull(operationAudit) ? null : getProcess(operationAudit.process());
         if (operationAudit == null || process == null) {
-            try {
-                return joinPoint.proceed();
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
+            return joinPoint.proceed();
         }
         OperationAuditContext operationAuditContext = new OperationAuditContext();
+        operationAuditContext.setStartAt(startAt);
         operationAuditContext.setType(operationAudit.type());
         operationAuditContext.setDescription(operationAudit.description());
         operationAuditContext.setArgs(mapArgs(joinPoint, methodSignature));
@@ -57,8 +56,9 @@ public class OperationAuditAspect extends ActEventAspect {
             operationAuditContext.setSuccess(true);
         } catch (Throwable e) {
             operationAuditContext.setSuccess(false);
-            throw new RuntimeException(e);
+            throw e;
         } finally {
+            operationAuditContext.setEndAt(Instant.now());
             process.process(operationAuditContext);
         }
         return result;

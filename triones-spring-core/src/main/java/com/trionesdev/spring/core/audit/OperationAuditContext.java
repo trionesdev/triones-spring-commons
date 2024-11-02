@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
 import java.util.Map;
 
 @Data
@@ -18,4 +19,6 @@ public class OperationAuditContext {
     private Map<String, Object> afterValue;
     private String type;
     private String description;
+    private Instant startAt;
+    private Instant endAt;
 }
