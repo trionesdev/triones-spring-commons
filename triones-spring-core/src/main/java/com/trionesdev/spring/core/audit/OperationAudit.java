@@ -18,5 +18,5 @@ public @interface OperationAudit {
 
     String description() default "";
 
-    Class<?> process() default Void.class;
+    Class<?> handler() default Void.class;
 }

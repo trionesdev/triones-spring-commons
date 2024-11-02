@@ -39,8 +39,8 @@ public class OperationAuditAspect extends ActEventAspect {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         OperationAudit operationAudit = AnnotationUtils.getAnnotation(methodSignature.getMethod(), OperationAudit.class);
-        OperationAuditHandler process = Objects.isNull(operationAudit) ? null : getHandler(operationAudit.process());
-        if (operationAudit == null || process == null) {
+        OperationAuditHandler handler = Objects.isNull(operationAudit) ? null : getHandler(operationAudit.handler());
+        if (operationAudit == null || handler == null) {
             return joinPoint.proceed();
         }
         OperationAuditContext operationAuditContext = new OperationAuditContext();
@@ -49,11 +49,11 @@ public class OperationAuditAspect extends ActEventAspect {
         operationAuditContext.setAction(operationAudit.action());
         operationAuditContext.setDescription(operationAudit.description());
         operationAuditContext.setArgs(mapArgs(joinPoint, methodSignature));
-        operationAuditContext.setBeforeValue(process.before(operationAuditContext.getArgs()));
+        operationAuditContext.setBeforeValue(handler.before(operationAuditContext.getArgs()));
         Object result;
         try {
             result = joinPoint.proceed();
-            operationAuditContext.setAfterValue(process.after(operationAuditContext.getArgs()));
+            operationAuditContext.setAfterValue(handler.after(operationAuditContext.getArgs()));
             operationAuditContext.setSuccess(true);
         } catch (Throwable e) {
             operationAuditContext.setSuccess(false);
@@ -61,7 +61,7 @@ public class OperationAuditAspect extends ActEventAspect {
             throw e;
         } finally {
             operationAuditContext.setEndAt(Instant.now());
-            process.process(operationAuditContext);
+            handler.process(operationAuditContext);
         }
         return result;
     }
