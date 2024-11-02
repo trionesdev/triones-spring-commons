@@ -19,14 +19,14 @@ import java.util.*;
 @Aspect
 public class OperationAuditAspect extends ActEventAspect {
 
-    private final List<OperationAuditHandler> processes;
-    private Map<Class<?>, OperationAuditHandler> processMap;
+    private final List<OperationAuditHandler> handlers;
+    private Map<Class<?>, OperationAuditHandler> handlerMap;
 
 
     @PostConstruct
     public void init() {
-        processMap = new HashMap<>();
-        processes.forEach(process -> processMap.put(process.getClass(), process));
+        handlerMap = new HashMap<>();
+        handlers.forEach(process -> handlerMap.put(process.getClass(), process));
     }
 
     @Pointcut("@annotation(com.trionesdev.spring.core.audit.OperationAudit)")
@@ -39,7 +39,7 @@ public class OperationAuditAspect extends ActEventAspect {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         OperationAudit operationAudit = AnnotationUtils.getAnnotation(methodSignature.getMethod(), OperationAudit.class);
-        OperationAuditHandler process = Objects.isNull(operationAudit) ? null : getProcess(operationAudit.process());
+        OperationAuditHandler process = Objects.isNull(operationAudit) ? null : getHandler(operationAudit.process());
         if (operationAudit == null || process == null) {
             return joinPoint.proceed();
         }
@@ -66,21 +66,21 @@ public class OperationAuditAspect extends ActEventAspect {
         return result;
     }
 
-    public OperationAuditHandler getProcess(Class<?> clazz) {
-        if (CollectionUtils.isEmpty(processes)) {
+    public OperationAuditHandler getHandler(Class<?> clazz) {
+        if (CollectionUtils.isEmpty(handlers)) {
             return null;
         }
         if (clazz == Void.class) {
-            if (processes.stream().filter(OperationAuditHandler::isDefault).count() > 1) {
+            if (handlers.stream().filter(OperationAuditHandler::isDefault).count() > 1) {
                 throw new RuntimeException("multi default process");
             }
-            return processes.stream().filter(OperationAuditHandler::isDefault).findFirst().orElse(null);
+            return handlers.stream().filter(OperationAuditHandler::isDefault).findFirst().orElse(null);
         } else {
-            OperationAuditHandler process = processMap.get(clazz);
-            if (process == null) {
+            OperationAuditHandler handler = handlerMap.get(clazz);
+            if (handler == null) {
                 throw new RuntimeException(clazz.getName() + " process not found");
             }
-            return process;
+            return handler;
         }
     }
 
