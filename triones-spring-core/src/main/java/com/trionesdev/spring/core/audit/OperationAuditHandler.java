@@ -2,7 +2,7 @@ package com.trionesdev.spring.core.audit;
 
 import java.util.Map;
 
-public abstract class OperationAuditProcess {
+public abstract class OperationAuditHandler {
 
     public Boolean isDefault() {
         return false;

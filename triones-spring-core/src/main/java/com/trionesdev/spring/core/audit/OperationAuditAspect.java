@@ -19,8 +19,8 @@ import java.util.*;
 @Aspect
 public class OperationAuditAspect extends ActEventAspect {
 
-    private final List<OperationAuditProcess> processes;
-    private Map<Class<?>, OperationAuditProcess> processMap;
+    private final List<OperationAuditHandler> processes;
+    private Map<Class<?>, OperationAuditHandler> processMap;
 
 
     @PostConstruct
@@ -39,7 +39,7 @@ public class OperationAuditAspect extends ActEventAspect {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         OperationAudit operationAudit = AnnotationUtils.getAnnotation(methodSignature.getMethod(), OperationAudit.class);
-        OperationAuditProcess process = Objects.isNull(operationAudit) ? null : getProcess(operationAudit.process());
+        OperationAuditHandler process = Objects.isNull(operationAudit) ? null : getProcess(operationAudit.process());
         if (operationAudit == null || process == null) {
             return joinPoint.proceed();
         }
@@ -66,17 +66,17 @@ public class OperationAuditAspect extends ActEventAspect {
         return result;
     }
 
-    public OperationAuditProcess getProcess(Class<?> clazz) {
+    public OperationAuditHandler getProcess(Class<?> clazz) {
         if (CollectionUtils.isEmpty(processes)) {
             return null;
         }
         if (clazz == Void.class) {
-            if (processes.stream().filter(OperationAuditProcess::isDefault).count() > 1) {
+            if (processes.stream().filter(OperationAuditHandler::isDefault).count() > 1) {
                 throw new RuntimeException("multi default process");
             }
-            return processes.stream().filter(OperationAuditProcess::isDefault).findFirst().orElse(null);
+            return processes.stream().filter(OperationAuditHandler::isDefault).findFirst().orElse(null);
         } else {
-            OperationAuditProcess process = processMap.get(clazz);
+            OperationAuditHandler process = processMap.get(clazz);
             if (process == null) {
                 throw new RuntimeException(clazz.getName() + " process not found");
             }
