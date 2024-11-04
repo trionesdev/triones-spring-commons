@@ -14,8 +14,8 @@ import java.util.Map;
 @NoArgsConstructor
 public class OperationAuditContext {
     private Map<String, Object> args;
-    private Map<String, Object> beforeValue;
-    private Map<String, Object> afterValue;
+    private Map<String, Object> beforeValues;
+    private Map<String, Object> afterValues;
     private String type;
     private String category;
     private String action;

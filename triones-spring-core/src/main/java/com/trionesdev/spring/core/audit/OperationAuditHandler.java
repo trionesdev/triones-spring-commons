@@ -8,11 +8,11 @@ public abstract class OperationAuditHandler {
         return false;
     }
 
-    public Map<String, Object> before(Map<String, Object> args) {
+    public Map<String, Object> beforeValues(Map<String, Object> args) {
         return null;
     }
 
-    public Map<String, Object> after(Map<String, Object> args) {
+    public Map<String, Object> afterValues(Map<String, Object> args) {
         return null;
     }
 
