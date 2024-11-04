@@ -13,7 +13,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OperationAuditContext {
-    private Map<String, Object> args;
+    private Map<String, Object> request;
+    private Object response;
     private Map<String, Object> beforeValues;
     private Map<String, Object> afterValues;
     private String type;
