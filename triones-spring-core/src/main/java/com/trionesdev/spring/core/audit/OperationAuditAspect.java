@@ -62,7 +62,7 @@ public class OperationAuditAspect extends ActEventAspect {
             throw e;
         } finally {
             operationAuditContext.setEndAt(Instant.now());
-            handler.process(operationAuditContext);
+            handler.handle(operationAuditContext);
         }
         return result;
     }

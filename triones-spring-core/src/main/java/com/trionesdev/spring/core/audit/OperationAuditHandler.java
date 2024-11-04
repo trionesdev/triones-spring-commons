@@ -16,6 +16,6 @@ public abstract class OperationAuditHandler {
         return null;
     }
 
-    public abstract void process(OperationAuditContext operationAuditContext);
+    public abstract void handle(OperationAuditContext operationAuditContext);
 
 }
