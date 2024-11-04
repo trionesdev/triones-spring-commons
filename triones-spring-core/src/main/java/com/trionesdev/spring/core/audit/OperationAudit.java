@@ -12,11 +12,38 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface OperationAudit {
+    /**
+     * 类型
+     *
+     * @return
+     */
     String type() default "";
 
+    /**
+     * 分类
+     *
+     * @return
+     */
+    String category() default "";
+
+    /**
+     * 行为
+     *
+     * @return
+     */
     String action() default "";
 
+    /**
+     * 描述
+     *
+     * @return
+     */
     String description() default "";
 
+    /**
+     * 处理实现类
+     *
+     * @return
+     */
     Class<?> handler() default Void.class;
 }
