@@ -74,13 +74,13 @@ public class OperationAuditAspect extends ActEventAspect {
         }
         if (clazz == Void.class) {
             if (handlers.stream().filter(OperationAuditHandler::isDefault).count() > 1) {
-                throw new RuntimeException("multi default process");
+                throw new RuntimeException("multi default handlers");
             }
             return handlers.stream().filter(OperationAuditHandler::isDefault).findFirst().orElse(null);
         } else {
             OperationAuditHandler handler = handlerMap.get(clazz);
             if (handler == null) {
-                throw new RuntimeException(clazz.getName() + " process not found");
+                throw new RuntimeException(clazz.getName() + " handler not found");
             }
             return handler;
         }
