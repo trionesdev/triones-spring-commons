@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class CaffeineCacheFacade<K, V> implements CacheFacade<K, V> {
-    private Caffeine<Object, Object> cacheBuilder =  Caffeine.newBuilder();
+    private Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
     private Cache<K, V> cache;
 
     public void setCacheSpecification(String cacheSpecification) {
@@ -38,6 +38,11 @@ public class CaffeineCacheFacade<K, V> implements CacheFacade<K, V> {
         getCache().policy().expireVariably().ifPresentOrElse(expireVariably -> {
             expireVariably.put(key, value, timeout, unit);
         }, () -> getCache().put(key, value));
+    }
+
+    @Override
+    public void setValue(K key, V value) {
+        getCache().put(key, value);
     }
 
     @Override

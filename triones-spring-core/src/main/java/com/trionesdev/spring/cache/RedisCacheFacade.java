@@ -16,6 +16,11 @@ public class RedisCacheFacade<K, V> implements CacheFacade<K, V> {
     }
 
     @Override
+    public void setValue(K key, V value) {
+        redisTemplate.opsForValue().set(key, value);
+    }
+
+    @Override
     public V getValue(K key) {
         return redisTemplate.opsForValue().get(key);
     }
