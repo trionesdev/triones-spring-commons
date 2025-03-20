@@ -3,6 +3,7 @@ package com.trionesdev.spring.cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class RedisCacheFacade<K, V> extends AbstractCacheFacade<K, V> {
@@ -14,12 +15,17 @@ public class RedisCacheFacade<K, V> extends AbstractCacheFacade<K, V> {
     }
 
     @Override
-    public void put(K key, V value, long timeout, TimeUnit unit) {
+    public void set(K key, V value, Duration timeout) {
+        redisTemplate.opsForValue().set(key, value, timeout);
+    }
+
+    @Override
+    public void set(K key, V value, long timeout, TimeUnit unit) {
         redisTemplate.opsForValue().set(key, value, timeout, unit);
     }
 
     @Override
-    public void put(K key, V value) {
+    public void set(K key, V value) {
         redisTemplate.opsForValue().set(key, value);
     }
 

@@ -2,6 +2,7 @@ package com.trionesdev.spring.cache;
 
 import org.springframework.cache.CacheManager;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class NoOpCacheFacade <K, V> extends AbstractCacheFacade<K, V>{
@@ -10,12 +11,17 @@ public class NoOpCacheFacade <K, V> extends AbstractCacheFacade<K, V>{
     }
 
     @Override
-    public void put(K key, V value, long timeout, TimeUnit unit) {
+    public void set(K key, V value, Duration timeout) {
 
     }
 
     @Override
-    public void put(K key, V value) {
+    public void set(K key, V value, long timeout, TimeUnit unit) {
+
+    }
+
+    @Override
+    public void set(K key, V value) {
 
     }
 

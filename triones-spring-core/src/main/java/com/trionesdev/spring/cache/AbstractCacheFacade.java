@@ -14,7 +14,7 @@ public abstract class AbstractCacheFacade<K, V> implements CacheFacade<K, V> {
 
 
     @Override
-    public void put(String cacheName, K key, V value) {
+    public void set(String cacheName, K key, V value) {
         Optional.ofNullable(cacheManager.getCache(cacheName)).ifPresent(cache -> cache.put(key, value));
     }
 

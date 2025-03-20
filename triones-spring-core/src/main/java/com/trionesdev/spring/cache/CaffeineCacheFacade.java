@@ -7,6 +7,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -39,14 +40,21 @@ public class CaffeineCacheFacade<K, V> extends AbstractCacheFacade<K, V> {
     }
 
     @Override
-    public void put(K key, V value, long timeout, TimeUnit unit) {
+    public void set(K key, V value, Duration timeout) {
+        getCache().policy().expireVariably().ifPresentOrElse(expireVariably -> {
+            expireVariably.put(key, value, timeout);
+        }, () -> getCache().put(key, value));
+    }
+
+    @Override
+    public void set(K key, V value, long timeout, TimeUnit unit) {
         getCache().policy().expireVariably().ifPresentOrElse(expireVariably -> {
             expireVariably.put(key, value, timeout, unit);
         }, () -> getCache().put(key, value));
     }
 
     @Override
-    public void put(K key, V value) {
+    public void set(K key, V value) {
         getCache().put(key, value);
     }
 

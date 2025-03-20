@@ -2,6 +2,7 @@ package com.trionesdev.spring.cache;
 
 import org.springframework.cache.CacheManager;
 
+import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -14,12 +15,17 @@ public class SimpleCacheFacade<K, V> extends AbstractCacheFacade<K, V> {
     }
 
     @Override
-    public void put(K key, V value, long timeout, TimeUnit unit) {
+    public void set(K key, V value, Duration timeout) {
         cache.put(key, value);
     }
 
     @Override
-    public void put(K key, V value) {
+    public void set(K key, V value, long timeout, TimeUnit unit) {
+        cache.put(key, value);
+    }
+
+    @Override
+    public void set(K key, V value) {
         cache.put(key, value);
     }
 
