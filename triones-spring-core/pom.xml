@@ -5,10 +5,10 @@
     <parent>
         <artifactId>triones-spring-commons</artifactId>
         <groupId>com.trionesdev.commons</groupId>
-        <version>3.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>Triones:Spring:Core</name>
+    <name>Triones:SpringCommons:Core</name>
     <artifactId>triones-spring-core</artifactId>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

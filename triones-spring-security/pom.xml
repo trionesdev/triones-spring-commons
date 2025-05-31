@@ -5,10 +5,10 @@
     <parent>
         <artifactId>triones-spring-commons</artifactId>
         <groupId>com.trionesdev.commons</groupId>
-        <version>3.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>Triones:Spring:Security</name>
+    <name>Triones:SpringCommons:Security</name>
     <artifactId>triones-spring-security</artifactId>
 
     <properties>
