@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JwtTokenConfig {
-    private Boolean local;
+    private Boolean remote = false;
     private String protocol;
     private String endpoint;
     private String secret;

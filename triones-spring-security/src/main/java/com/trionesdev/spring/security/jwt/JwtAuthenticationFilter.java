@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authorization = authorization.replace("Bearer ", "");
             }
             //region jwt token 解析逻辑
-            if (BooleanUtils.isTrue(jwtTokenConfig.getLocal()) && StringUtils.isNotBlank(authorization)) {
+            if (BooleanUtils.isFalse(jwtTokenConfig.getRemote()) && StringUtils.isNotBlank(authorization)) {
                 Pattern pattern = Pattern.compile(JWT_TOKEN_URI);
                 Matcher matcher = pattern.matcher(request.getRequestURI());
                 if (matcher.matches()) {
@@ -74,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.isNotBlank(authorization)) {
                 Actor actor = new Actor();
                 Map<String, Object> claims = null;
-                if (BooleanUtils.isTrue(jwtTokenConfig.getLocal())) {
+                if (BooleanUtils.isFalse(jwtTokenConfig.getRemote())) {
                     claims = jwtFacade.parse(authorization);
                 } else {
                     claims = remoteClaims(authorization);
@@ -85,7 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String role = Optional.ofNullable(claims.get(ACTOR_ROLE)).map(String::valueOf).orElse(null);
                     String tenantId = Optional.ofNullable(claims.get(ACTOR_TENANT_ID)).map(String::valueOf).orElse(null);
                     String tenantMemberId = Optional.ofNullable(claims.get(ACTOR_TENANT_MEMBER_ID)).map(String::valueOf).orElse(null);
-                    Map<String,Object> attributes = Optional.ofNullable(claims.get(ACTOR_ATTRIBUTES))
+                    Map<String, Object> attributes = Optional.ofNullable(claims.get(ACTOR_ATTRIBUTES))
                             .map(o -> JSON.parseObject(JSON.toJSONString(o), new TypeReference<Map<String, Object>>() {
                             })).orElse(null);
                     if ((Objects.nonNull(actorId) || Objects.nonNull(userId)) && Objects.nonNull(role)) {
