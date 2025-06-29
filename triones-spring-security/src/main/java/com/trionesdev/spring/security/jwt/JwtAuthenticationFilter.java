@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String authorization = request.getHeader(AUTHORIZATION);
             if (StringUtils.isNotBlank(authorization)) {
-                authorization = authorization.replace("Bearer ", "");
+                authorization = authorization.replace("Bearer", "").trim();
             }
             //region jwt token 解析逻辑
             if (BooleanUtils.isFalse(jwtTokenConfig.getRemote()) && StringUtils.isNotBlank(authorization)) {
