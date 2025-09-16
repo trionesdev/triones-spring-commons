@@ -84,6 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String userId = Optional.ofNullable(claims.get(ACTOR_USER_ID)).map(String::valueOf).orElse(null);
                     String role = Optional.ofNullable(claims.get(ACTOR_ROLE)).map(String::valueOf).orElse(null);
                     String tenantId = Optional.ofNullable(claims.get(ACTOR_TENANT_ID)).map(String::valueOf).orElse(null);
+                    String memberId = Optional.ofNullable(claims.get(ACTOR_MEMBER_ID)).map(String::valueOf).orElse(null);
                     String tenantMemberId = Optional.ofNullable(claims.get(ACTOR_TENANT_MEMBER_ID)).map(String::valueOf).orElse(null);
                     Map<String, Object> attributes = Optional.ofNullable(claims.get(ACTOR_ATTRIBUTES))
                             .map(o -> JSON.parseObject(JSON.toJSONString(o), new TypeReference<Map<String, Object>>() {
@@ -93,6 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         actor.setUserId(userId);
                         actor.setRole(role);
                         actor.setTenantId(tenantId);
+                        actor.setMemberId(memberId);
                         actor.setTenantMemberId(tenantMemberId);
                         actor.setAttributes(attributes);
                         actor.setTime(Instant.now());
