@@ -1,5 +1,7 @@
 package com.trionesdev.spring.core.audit;
 
+import org.intellij.lang.annotations.Language;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -18,7 +20,12 @@ public @interface OperationAudit {
      * @return
      */
     String type() default "";
-
+    /**
+     * 子域
+     *
+     * @return
+     */
+    String domain() default "";
     /**
      * 分类
      *
@@ -32,6 +39,16 @@ public @interface OperationAudit {
      * @return
      */
     String action() default "";
+
+    /**
+     * 对象ID
+     *
+     * @return
+     */
+    @Language(value = "SpEL")
+    String subject() default "";
+
+    String subjectField() default "";
 
     /**
      * 描述

@@ -15,11 +15,14 @@ import java.util.Map;
 public class OperationAuditContext {
     private Map<String, Object> request;
     private Object response;
-    private Map<String, Object> beforeContent;
-    private Map<String, Object> afterContent;
+    private String beforeContent;
+    private String afterContent;
     private String type;
+    private String domain;
     private String category;
     private String action;
+    private String subject;
+    private String subjectField;
     private String description;
     private Instant startAt;
     private Instant endAt;

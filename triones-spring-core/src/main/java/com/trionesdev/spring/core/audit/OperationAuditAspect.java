@@ -1,16 +1,22 @@
 package com.trionesdev.spring.core.audit;
 
 import com.trionesdev.spring.core.event.act.ActEventAspect;
+import com.trionesdev.spring.core.event.act.ActEventEvaluationContext;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.time.Instant;
 import java.util.*;
@@ -43,19 +49,30 @@ public class OperationAuditAspect extends ActEventAspect {
         if (operationAudit == null || handler == null) {
             return joinPoint.proceed();
         }
+        ExpressionParser parser = new SpelExpressionParser();
+        StandardEvaluationContext evaluationContext = new ActEventEvaluationContext(joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs(), new DefaultParameterNameDiscoverer());
+        evaluationContext.setBeanResolver(this.beanResolver);
         OperationAuditContext operationAuditContext = new OperationAuditContext();
+        if (StringUtils.isNoneBlank(operationAudit.subject())) {
+            Object subject = parser.parseExpression(operationAudit.subject()).getValue(evaluationContext);
+            if (subject != null) {
+                operationAuditContext.setSubject(subject.toString());
+            }
+        }
+
         operationAuditContext.setStartAt(startAt);
         operationAuditContext.setType(operationAudit.type());
+        operationAuditContext.setDomain(operationAudit.domain());
         operationAuditContext.setCategory(operationAudit.category());
         operationAuditContext.setAction(operationAudit.action());
         operationAuditContext.setDescription(operationAudit.description());
         operationAuditContext.setRequest(mapArgs(joinPoint, methodSignature));
-        operationAuditContext.setBeforeContent(handler.beforeContent(operationAuditContext.getRequest()));
+        operationAuditContext.setBeforeContent(handler.beforeContent(operationAuditContext, operationAuditContext.getRequest()));
         Object result;
         try {
             result = joinPoint.proceed();
             operationAuditContext.setResponse(result);
-            operationAuditContext.setAfterContent(handler.afterContent(operationAuditContext.getRequest()));
+            operationAuditContext.setAfterContent(handler.afterContent(operationAuditContext, operationAuditContext.getRequest()));
             operationAuditContext.setSuccess(true);
         } catch (Throwable e) {
             operationAuditContext.setSuccess(false);
