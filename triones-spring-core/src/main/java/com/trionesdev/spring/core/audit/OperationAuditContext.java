@@ -15,8 +15,8 @@ import java.util.Map;
 public class OperationAuditContext {
     private Map<String, Object> request;
     private Object response;
-    private Map<String, Object> beforeValues;
-    private Map<String, Object> afterValues;
+    private Map<String, Object> beforeContent;
+    private Map<String, Object> afterContent;
     private String type;
     private String category;
     private String action;

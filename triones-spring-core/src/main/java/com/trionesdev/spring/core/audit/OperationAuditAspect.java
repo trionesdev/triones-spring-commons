@@ -50,12 +50,12 @@ public class OperationAuditAspect extends ActEventAspect {
         operationAuditContext.setAction(operationAudit.action());
         operationAuditContext.setDescription(operationAudit.description());
         operationAuditContext.setRequest(mapArgs(joinPoint, methodSignature));
-        operationAuditContext.setBeforeValues(handler.beforeValues(operationAuditContext.getRequest()));
+        operationAuditContext.setBeforeContent(handler.beforeContent(operationAuditContext.getRequest()));
         Object result;
         try {
             result = joinPoint.proceed();
             operationAuditContext.setResponse(result);
-            operationAuditContext.setAfterValues(handler.afterValues(operationAuditContext.getRequest()));
+            operationAuditContext.setAfterContent(handler.afterContent(operationAuditContext.getRequest()));
             operationAuditContext.setSuccess(true);
         } catch (Throwable e) {
             operationAuditContext.setSuccess(false);
