@@ -54,10 +54,11 @@ public class OperationAuditAspect extends ActEventAspect {
         evaluationContext.setBeanResolver(this.beanResolver);
         OperationAuditContext operationAuditContext = new OperationAuditContext();
         operationAuditContext.setBatch(operationAudit.batch());
-        if (StringUtils.isNoneBlank(operationAudit.subject())) {
-            Object subject = parser.parseExpression(operationAudit.subject()).getValue(evaluationContext);
-            if (subject != null) {
-                operationAuditContext.setSubject(subject.toString());
+        operationAuditContext.setSubject(operationAudit.subject());
+        if (StringUtils.isNoneBlank(operationAudit.subjectId())) {
+            Object subjectId = parser.parseExpression(operationAudit.subjectId()).getValue(evaluationContext);
+            if (subjectId != null) {
+                operationAuditContext.setSubjectId(subjectId.toString());
             }
         }
 
@@ -67,6 +68,7 @@ public class OperationAuditAspect extends ActEventAspect {
         operationAuditContext.setCategory(operationAudit.category());
         operationAuditContext.setAction(operationAudit.action());
         operationAuditContext.setDescription(operationAudit.description());
+        operationAuditContext.setDescriptionResourceKey(operationAudit.descriptionResourceKey());
         operationAuditContext.setRequest(mapArgs(joinPoint, methodSignature));
         operationAuditContext.setBeforeContent(handler.beforeContent(operationAuditContext, operationAuditContext.getRequest()));
         Object result;

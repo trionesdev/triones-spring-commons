@@ -19,12 +19,13 @@ public class OperationAuditContext {
     private String beforeContent;
     private String afterContent;
     private String type;
-    private String domain;
     private String category;
+    private String domain;
     private String action;
     private String subject;
-    private String subjectField;
+    private String subjectId;
     private String description;
+    private String descriptionResourceKey;
     private Instant startAt;
     private Instant endAt;
     private Boolean success;

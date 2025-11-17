@@ -42,14 +42,18 @@ public @interface OperationAudit {
     String action() default "";
 
     /**
+     * 主体
+     *
+     * @return
+     */
+    String subject() default "";
+    /**
      * 对象ID
      *
      * @return
      */
     @Language(value = "SpEL")
-    String subject() default "";
-
-    String subjectField() default "";
+    String subjectId() default "";
 
     /**
      * 描述
@@ -57,6 +61,7 @@ public @interface OperationAudit {
      * @return
      */
     String description() default "";
+    String descriptionResourceKey() default "";
 
     /**
      * 处理实现类
