@@ -13,6 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OperationAuditContext {
+    private boolean batch;
     private Map<String, Object> request;
     private Object response;
     private String beforeContent;

@@ -53,6 +53,7 @@ public class OperationAuditAspect extends ActEventAspect {
         StandardEvaluationContext evaluationContext = new ActEventEvaluationContext(joinPoint.getTarget(), methodSignature.getMethod(), joinPoint.getArgs(), new DefaultParameterNameDiscoverer());
         evaluationContext.setBeanResolver(this.beanResolver);
         OperationAuditContext operationAuditContext = new OperationAuditContext();
+        operationAuditContext.setBatch(operationAudit.batch());
         if (StringUtils.isNoneBlank(operationAudit.subject())) {
             Object subject = parser.parseExpression(operationAudit.subject()).getValue(evaluationContext);
             if (subject != null) {

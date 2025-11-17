@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface OperationAudit {
+    boolean batch() default false;
     /**
      * 类型
      *
