@@ -22,17 +22,18 @@ public @interface OperationAudit {
      */
     String type() default "";
     /**
-     * 子域
-     *
-     * @return
-     */
-    String domain() default "";
-    /**
      * 分类
      *
      * @return
      */
     String category() default "";
+    /**
+     * 子域
+     *
+     * @return
+     */
+    String domain() default "";
+
 
     /**
      * 行为
@@ -61,6 +62,11 @@ public @interface OperationAudit {
      * @return
      */
     String description() default "";
+    /**
+     * 描述资源key，用于国际化
+     *
+     * @return
+     */
     String descriptionResourceKey() default "";
 
     /**
