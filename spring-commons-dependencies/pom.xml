@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.trionesdev.commons</groupId>
-    <artifactId>triones-spring-commons-dependencies</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <artifactId>spring-commons-dependencies</artifactId>
+    <version>6.0.0-SNAPSHOT</version>
     <name>Triones:SpringCommons:Dependencies</name>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -151,8 +151,8 @@
 
             <dependency>
                 <groupId>com.trionesdev.commons</groupId>
-                <artifactId>triones-commons-dependencies</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <artifactId>commons-dependencies</artifactId>
+                <version>0.0.2-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -162,12 +162,12 @@
 
             <dependency>
                 <groupId>com.trionesdev.commons</groupId>
-                <artifactId>triones-spring-core</artifactId>
+                <artifactId>spring-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.trionesdev.commons</groupId>
-                <artifactId>triones-spring-security</artifactId>
+                <artifactId>spring-security</artifactId>
                 <version>${project.version}</version>
                 <exclusions>
                     <exclusion>
