@@ -24,13 +24,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.trionesdev.commons.context.actor.ActorConstants.X_TRACE_ID;
 import static com.trionesdev.commons.core.jwt.ClaimsKeyConstant.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
@@ -52,8 +50,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
+        Actor actor = new Actor();
         try {
+            String traceId = request.getHeader(X_TRACE_ID);
+            if (StringUtils.isNotBlank(traceId)) {
+                actor.setTraceId(traceId);
+            }else {
+                actor.setTraceId(UUID.randomUUID().toString());
+            }
             String authorization = request.getHeader(AUTHORIZATION);
             if (StringUtils.isNotBlank(authorization)) {
                 authorization = authorization.replace("Bearer", "").trim();
@@ -72,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
             if (StringUtils.isNotBlank(authorization)) {
-                Actor actor = new Actor();
+
                 Map<String, Object> claims = null;
                 if (BooleanUtils.isFalse(jwtTokenConfig.getRemote())) {
                     claims = jwtFacade.parse(authorization);
@@ -113,12 +117,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
-                actorContext.setActor(actor);
+
             }
+            actorContext.setActor(actor);
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }
         filterChain.doFilter(request, response);
+        response.setHeader(X_TRACE_ID, actor.getTraceId());
         actorContext.resetActor();
     }
 
