@@ -41,6 +41,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final String JWT_TOKEN_URI = "jwt/token";
 
+    private boolean isWebSocketRequest(HttpServletRequest request) {
+        String upgrade = request.getHeader("Upgrade");
+        String connection = request.getHeader("Connection");
+
+        return "websocket".equalsIgnoreCase(upgrade) &&
+                connection != null &&
+                connection.toLowerCase().contains("upgrade");
+    }
+
     public JwtAuthenticationFilter(JwtTokenConfig jwtTokenConfig, JwtFacade jwtFacade, ActorContext actorContext) {
         this.jwtTokenConfig = jwtTokenConfig;
         this.jwtFacade = jwtFacade;
@@ -55,12 +64,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String traceId = request.getHeader(X_TRACE_ID);
             if (StringUtils.isNotBlank(traceId)) {
                 actor.setTraceId(traceId);
-            }else {
+            } else {
                 actor.setTraceId(UUID.randomUUID().toString());
             }
             String authorization = request.getHeader(AUTHORIZATION);
             if (StringUtils.isNotBlank(authorization)) {
                 authorization = authorization.replace("Bearer", "").trim();
+            }
+            if (StringUtils.isBlank(authorization)) {
+                if (isWebSocketRequest(request)) {
+                    authorization = request.getParameter("token");
+                }
             }
             //region jwt token 解析逻辑
             if (BooleanUtils.isFalse(jwtTokenConfig.getRemote()) && StringUtils.isNotBlank(authorization)) {
@@ -137,7 +151,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             assert response.body() != null;
-            return JSON.parseObject(response.body().string(), new TypeReference<Map<String, Object>>() {
+            return JSON.parseObject(response.body().string(), new TypeReference<>() {
             });
         }
     }
