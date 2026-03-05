@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security.jwt.reactive;
+package com.trionesdev.spring.security.jwt1.reactive;
 
 import com.trionesdev.commons.context.actor.Actor;
 import com.trionesdev.commons.context.actor.reactive.ActorContext;

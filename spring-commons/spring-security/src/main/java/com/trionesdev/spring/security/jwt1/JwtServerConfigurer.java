@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security.jwt;
+package com.trionesdev.spring.security.jwt1;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;

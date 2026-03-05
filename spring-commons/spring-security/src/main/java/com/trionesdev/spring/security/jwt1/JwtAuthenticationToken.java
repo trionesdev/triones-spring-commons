@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security.jwt;
+package com.trionesdev.spring.security.jwt1;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

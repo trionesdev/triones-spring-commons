@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security.jwt;
+package com.trionesdev.spring.security.jwt1;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

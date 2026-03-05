@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security.jwt;
+package com.trionesdev.spring.security.jwt1;
 
 import com.alibaba.fastjson2.JSON;
 import com.trionesdev.commons.exception.ErrorResponse;

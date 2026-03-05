@@ -1,9 +1,9 @@
-package com.trionesdev.spring.security.jwt.reactive;
+package com.trionesdev.spring.security.jwt1.reactive;
 
 import com.google.common.collect.Lists;
 import com.trionesdev.commons.context.actor.Actor;
-import com.trionesdev.spring.security.jwt.JwtAuthenticationToken;
-import com.trionesdev.spring.security.jwt.JwtUserDetails;
+import com.trionesdev.spring.security.jwt1.JwtAuthenticationToken;
+import com.trionesdev.spring.security.jwt1.JwtUserDetails;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
