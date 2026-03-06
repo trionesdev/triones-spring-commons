@@ -5,7 +5,7 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import com.trionesdev.spring.security.AbstractAuthenticationProvider;
-import com.trionesdev.spring.security.SecurityConfig;
+import com.trionesdev.spring.security.SecurityTokenConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -15,24 +15,23 @@ import java.util.Map;
 
 public class JwtAuthenticationProvider extends AbstractAuthenticationProvider {
 
-    public JwtAuthenticationProvider(SecurityConfig config) {
+    public JwtAuthenticationProvider(SecurityTokenConfig config) {
         super(config);
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
+
         try {
             Map<String, Object> claims = parseJwtToken(jwtAuthenticationToken.getToken());
-            if (claims == null) {
-                return null;
-            }else {
+            if (claims != null) {
                 jwtAuthenticationToken.setClaims(claims);
                 jwtAuthenticationToken.setAuthenticated(true);
-                return jwtAuthenticationToken;
             }
+            return jwtAuthenticationToken;
         } catch (Exception e) {
-            return null;
+            return jwtAuthenticationToken;
         }
     }
 

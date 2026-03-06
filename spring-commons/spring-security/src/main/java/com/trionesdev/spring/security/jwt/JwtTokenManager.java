@@ -1,31 +1,31 @@
 package com.trionesdev.spring.security.jwt;
 
-import com.google.common.base.Strings;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.trionesdev.spring.security.SecurityConfig;
+import com.trionesdev.spring.security.SecurityTokenConfig;
 import com.trionesdev.spring.security.token.Token;
 import com.trionesdev.spring.security.token.TokenDefinition;
 import com.trionesdev.spring.security.token.TokenManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Calendar;
 import java.util.Date;
 
 @RequiredArgsConstructor
 public class JwtTokenManager implements TokenManager {
-    private final SecurityConfig config;
+    private final SecurityTokenConfig config;
     @Override
     public Token createToken(TokenDefinition tokenDefinition) {
         Date issueAt = new Date();
 
         JWTClaimsSet.Builder jwtClaimsSetBuilder = new JWTClaimsSet.Builder()
-                .subject(tokenDefinition.getId())
+                .subject(tokenDefinition.getSubject())
                 .issueTime(issueAt);
         if (MapUtils.isNotEmpty(tokenDefinition.getClaims())) {
             tokenDefinition.getClaims().forEach(jwtClaimsSetBuilder::claim);
@@ -38,7 +38,7 @@ public class JwtTokenManager implements TokenManager {
         }
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), jwtClaimsSetBuilder.build());
         try {
-            signedJWT.sign(new MACSigner(Strings.padEnd(config.getSecret(), 128, '0')));
+            signedJWT.sign(new MACSigner(StringUtils.rightPad(config.getSecret(), 128, '0')));
             String token = signedJWT.serialize();
             return Token.builder()
                     .accessToken(token)

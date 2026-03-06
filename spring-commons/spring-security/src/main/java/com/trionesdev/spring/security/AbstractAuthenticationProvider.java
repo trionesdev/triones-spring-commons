@@ -3,9 +3,9 @@ package com.trionesdev.spring.security;
 import org.springframework.security.authentication.AuthenticationProvider;
 
 public abstract class AbstractAuthenticationProvider implements AuthenticationProvider {
-    protected final SecurityConfig config;
+    protected final SecurityTokenConfig config;
 
-    public AbstractAuthenticationProvider(SecurityConfig config) {
+    public AbstractAuthenticationProvider(SecurityTokenConfig config) {
         this.config = config;
     }
 }
