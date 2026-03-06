@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security;
+package com.trionesdev.spring.security.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
