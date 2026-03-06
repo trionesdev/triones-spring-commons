@@ -1,5 +1,6 @@
 package com.trionesdev.spring.security;
 
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -19,6 +20,7 @@ public class GeneralAuthenticationConfigurer<H extends HttpSecurityBuilder<H>>
 
     @Override
     public void configure(H builder) {
+        generalAuthenticationFilter.setAuthenticationManager(builder.getSharedObject(AuthenticationManager.class));
         builder.addFilterAfter(generalAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
