@@ -1,29 +1,20 @@
 package com.trionesdev.spring.security;
 
-import com.trionesdev.spring.security.jwt.JwtAuthenticationToken;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.log.LogMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-public abstract class AbstractAuthenticationFilter extends OncePerRequestFilter {
+public abstract class AbstractAuthenticationExecutor implements AuthenticationExecutor {
     protected final SecurityTokenConfig securityTokenConfig;
     protected AuthenticationManager authenticationManager;
-    protected AuthProcessor authProcessor;
+    protected AuthenticationInterceptor authenticationInterceptor;
     protected AuthorityManager authorityManager;
 
-    public AbstractAuthenticationFilter(SecurityTokenConfig securityTokenConfig) {
+    public AbstractAuthenticationExecutor(SecurityTokenConfig securityTokenConfig) {
         this.securityTokenConfig = securityTokenConfig;
     }
 
@@ -31,8 +22,12 @@ public abstract class AbstractAuthenticationFilter extends OncePerRequestFilter 
         this.authenticationManager = authenticationManager;
     }
 
-    public void setAuthProcessor(AuthProcessor authProcessor) {
-        this.authProcessor = authProcessor;
+    public void setAuthProcessor(AuthenticationInterceptor authenticationInterceptor) {
+        this.authenticationInterceptor = authenticationInterceptor;
+    }
+
+    public void setAuthorityManager(AuthorityManager authorityManager) {
+        this.authorityManager = authorityManager;
     }
 
     protected boolean isWebSocketRequest(HttpServletRequest request) {
@@ -58,18 +53,21 @@ public abstract class AbstractAuthenticationFilter extends OncePerRequestFilter 
 
     public abstract Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response);
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Authentication authenticationResult = attemptAuthentication(request, response);
-        if (authenticationResult != null && authenticationResult.isAuthenticated()) {
-            setAuthentication(authenticationResult);
-        }
-        if (authProcessor != null) {
-            authProcessor.before(getAuthentication());
-        }
-        filterChain.doFilter(request, response);
-        if (authenticationResult != null && authProcessor != null) {
-            authProcessor.after(getAuthentication());
+    public void execute(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
+        try {
+            Authentication authenticationResult = attemptAuthentication(request, response);
+            if (authenticationResult != null && authenticationResult.isAuthenticated()) {
+                setAuthentication(authenticationResult);
+            }
+            if (authenticationInterceptor != null) {
+                authenticationInterceptor.before(getAuthentication());
+            }
+            filterChain.doFilter(request, response);
+            if (authenticationResult != null && authenticationInterceptor != null) {
+                authenticationInterceptor.after(getAuthentication());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

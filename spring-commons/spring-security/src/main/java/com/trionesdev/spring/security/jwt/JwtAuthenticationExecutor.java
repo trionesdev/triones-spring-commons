@@ -1,20 +1,16 @@
 package com.trionesdev.spring.security.jwt;
 
-import com.trionesdev.spring.security.AbstractAuthenticationFilter;
+import com.trionesdev.spring.security.AbstractAuthenticationExecutor;
 import com.trionesdev.spring.security.SecurityTokenConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-public class JwtAuthenticationFilter extends AbstractAuthenticationFilter {
-    public JwtAuthenticationFilter(SecurityTokenConfig securityTokenConfig) {
+public class JwtAuthenticationExecutor extends AbstractAuthenticationExecutor {
+    public JwtAuthenticationExecutor(SecurityTokenConfig securityTokenConfig) {
         super(securityTokenConfig);
     }
 

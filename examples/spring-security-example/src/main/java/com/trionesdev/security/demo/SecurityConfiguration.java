@@ -1,7 +1,7 @@
 package com.trionesdev.security.demo;
 
 import com.trionesdev.spring.security.*;
-import com.trionesdev.spring.security.jwt.JwtAuthenticationFilter;
+import com.trionesdev.spring.security.jwt.JwtAuthenticationExecutor;
 import com.trionesdev.spring.security.jwt.JwtAuthenticationProvider;
 import com.trionesdev.spring.security.jwt.JwtTokenManager;
 import com.trionesdev.spring.security.token.TokenManager;
@@ -29,8 +29,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthProcessor authenticationProcessor() {
-        return new CustomAuthProcessor();
+    public AuthenticationInterceptor authenticationProcessor() {
+        return new CustomAuthenticationInterceptor();
     }
 
     @Bean
@@ -49,10 +49,13 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthProcessor processor, AuthorityManager authorityManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationInterceptor processor, AuthorityManager authorityManager) throws Exception {
 
         SecurityTokenConfig config = new SecurityTokenConfig();
-        var authFilter = new JwtAuthenticationFilter(config);
+        var authExecutor = new JwtAuthenticationExecutor(config);
+
+        GeneralAuthenticationConfigurer<HttpSecurity> authConfigurer = new GeneralAuthenticationConfigurer<>(authExecutor);
+        authConfigurer.setAuthenticationInterceptor(processor);
 
         http.authenticationProvider(new JwtAuthenticationProvider(config, authorityManager))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -60,7 +63,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/login1", "/profile").permitAll()
                         .anyRequest().authenticated())
-                .with(new GeneralAuthenticationConfigurer<>(authFilter, processor), Customizer.withDefaults())
+                .with(authConfigurer, Customizer.withDefaults())
                 .exceptionHandling(e ->
                         e.authenticationEntryPoint(new JsonAuthenticationEntryPoint())
                                 .accessDeniedHandler(new JsonAccessDeniedHandler()))
