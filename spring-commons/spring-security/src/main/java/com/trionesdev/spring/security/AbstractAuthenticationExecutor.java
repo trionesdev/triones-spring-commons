@@ -3,6 +3,7 @@ package com.trionesdev.spring.security;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -39,6 +40,18 @@ public abstract class AbstractAuthenticationExecutor implements AuthenticationEx
                 connection.toLowerCase().contains("upgrade");
     }
 
+    protected String getToken(HttpServletRequest request) {
+        String token = request.getHeader(securityTokenConfig.getHeaderKey());
+        if (StringUtils.isNotBlank(token)) {
+            token = token.replace("Bearer", "").trim();
+        }
+        if (StringUtils.isBlank(token)) {
+            if (isWebSocketRequest(request)) {
+                token = request.getParameter(securityTokenConfig.getQueryParamKey());
+            }
+        }
+        return token;
+    }
 
     public void setAuthentication(Authentication authentication) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
