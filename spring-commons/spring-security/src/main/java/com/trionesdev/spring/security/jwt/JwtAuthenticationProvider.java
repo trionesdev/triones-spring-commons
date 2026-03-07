@@ -5,6 +5,7 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import com.trionesdev.spring.security.AbstractAuthenticationProvider;
+import com.trionesdev.spring.security.AuthorityManager;
 import com.trionesdev.spring.security.SecurityTokenConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -15,8 +16,8 @@ import java.util.Map;
 
 public class JwtAuthenticationProvider extends AbstractAuthenticationProvider {
 
-    public JwtAuthenticationProvider(SecurityTokenConfig config) {
-        super(config);
+    public JwtAuthenticationProvider(SecurityTokenConfig config, AuthorityManager authorityManager) {
+        super(config, authorityManager);
     }
 
     @Override

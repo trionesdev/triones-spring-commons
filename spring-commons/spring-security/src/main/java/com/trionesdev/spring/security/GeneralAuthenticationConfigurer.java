@@ -8,9 +8,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class GeneralAuthenticationConfigurer<H extends HttpSecurityBuilder<H>>
         extends AbstractHttpConfigurer<GeneralAuthenticationConfigurer<H>, H> {
     private final AbstractAuthenticationFilter authFilter;
+    private final AuthProcessor authProcessor;
 
-    public GeneralAuthenticationConfigurer(AbstractAuthenticationFilter authFilter) {
+    public GeneralAuthenticationConfigurer(AbstractAuthenticationFilter authFilter, AuthProcessor authProcessor) {
         this.authFilter = authFilter;
+        this.authProcessor = authProcessor;
     }
 
     @Override
@@ -21,6 +23,7 @@ public class GeneralAuthenticationConfigurer<H extends HttpSecurityBuilder<H>>
     @Override
     public void configure(H builder) {
         authFilter.setAuthenticationManager(builder.getSharedObject(AuthenticationManager.class));
+        authFilter.setAuthProcessor(authProcessor);
         builder.addFilterAfter(authFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

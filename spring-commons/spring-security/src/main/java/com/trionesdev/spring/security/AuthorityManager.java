@@ -6,5 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.List;
 
 public interface AuthorityManager {
-    List<GrantedAuthority> getAuthorities(Authentication authentication);
+    List<String> getRoles(Authentication authentication);
+
+    List<String> getPermissions(Authentication authentication);
 }

@@ -2,15 +2,12 @@ package com.trionesdev.spring.security.jwt;
 
 import com.trionesdev.spring.security.AbstractAuthenticationFilter;
 import com.trionesdev.spring.security.SecurityTokenConfig;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +18,8 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationFilter {
         super(securityTokenConfig);
     }
 
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    public JwtAuthenticationToken attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader(AUTHORIZATION);
         if (StringUtils.isNotBlank(token)) {
             token = token.replace("Bearer", "").trim();
@@ -37,11 +33,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationFilter {
         JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(authorities);
         jwtAuthenticationToken.setToken(token);
         Authentication authentication = this.authenticationManager.authenticate(jwtAuthenticationToken);
-//        if (this.authorityManager != null){
-//            authorities = this.authorityManager.getAuthorities(authentication);
-//
-//        }
-        setAuthentication(authentication);
-        filterChain.doFilter(request, response);
+        return (JwtAuthenticationToken) authentication;
     }
+
 }

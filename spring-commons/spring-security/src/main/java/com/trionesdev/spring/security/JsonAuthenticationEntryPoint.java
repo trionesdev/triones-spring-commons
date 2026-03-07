@@ -16,7 +16,7 @@ import java.io.IOException;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @Slf4j
-public class TokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JsonAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {

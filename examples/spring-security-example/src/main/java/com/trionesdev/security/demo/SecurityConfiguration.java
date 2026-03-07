@@ -1,11 +1,9 @@
 package com.trionesdev.security.demo;
 
-import com.trionesdev.spring.security.GeneralAuthenticationConfigurer;
-import com.trionesdev.spring.security.SecurityTokenConfig;
+import com.trionesdev.spring.security.*;
 import com.trionesdev.spring.security.jwt.JwtAuthenticationFilter;
 import com.trionesdev.spring.security.jwt.JwtAuthenticationProvider;
 import com.trionesdev.spring.security.jwt.JwtTokenManager;
-import com.trionesdev.spring.security.TokenAuthenticationEntryPoint;
 import com.trionesdev.spring.security.token.TokenManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,22 +26,26 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public AuthProcessor authenticationProcessor() {
+        return new CustomAuthProcessor();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthProcessor processor) throws Exception {
 
         SecurityTokenConfig config = new SecurityTokenConfig();
-//        AbstractAuthenticationProcessor processor = new JwtAuthenticationProcessor();
-//        processor.setSecurityConfig(config);
-
         var authFilter = new JwtAuthenticationFilter(config);
 
-        http.authenticationProvider(new JwtAuthenticationProvider(config))
+        http.authenticationProvider(new JwtAuthenticationProvider(config, null))
                 .csrf(AbstractHttpConfigurer::disable)
                 .anonymous(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/login1","/profile").permitAll()
+                        .requestMatchers("/login1", "/profile").permitAll()
                         .anyRequest().authenticated())
-                .with(new GeneralAuthenticationConfigurer<>(authFilter),Customizer.withDefaults())
-                .exceptionHandling(e -> e.authenticationEntryPoint(new TokenAuthenticationEntryPoint()))
+                .with(new GeneralAuthenticationConfigurer<>(authFilter, processor), Customizer.withDefaults())
+                .exceptionHandling(e ->
+                        e.authenticationEntryPoint(new JsonAuthenticationEntryPoint())
+                                .accessDeniedHandler(new JsonAccessDeniedHandler()))
         ;
         return http.build();
     }
