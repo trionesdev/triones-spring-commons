@@ -29,8 +29,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationFilter {
                 token = request.getParameter(securityTokenConfig.getTokenKey());
             }
         }
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(authorities);
+        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken( );
         jwtAuthenticationToken.setToken(token);
         Authentication authentication = this.authenticationManager.authenticate(jwtAuthenticationToken);
         return (JwtAuthenticationToken) authentication;
