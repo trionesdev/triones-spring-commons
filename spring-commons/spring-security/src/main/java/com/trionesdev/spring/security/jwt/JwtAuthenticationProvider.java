@@ -39,9 +39,8 @@ public class JwtAuthenticationProvider extends AbstractAuthenticationProvider {
             if (claims != null) {
                 JwtUserDetails userDetails = JwtUserDetails.builder().claims(claims).build();
                 jwtAuthenticationToken.setDetails(userDetails);
-                jwtAuthenticationToken.setAuthenticated(true);
+                List<GrantedAuthority> authorities = new ArrayList<>();
                 if (authorityManager != null) {
-                    List<GrantedAuthority> authorities = new ArrayList<>();
                     List<String> roles = authorityManager.getRoles(jwtAuthenticationToken);
                     List<String> permissions = authorityManager.getPermissions(jwtAuthenticationToken);
                     if (CollectionUtils.isNotEmpty(roles)) {
@@ -51,8 +50,14 @@ public class JwtAuthenticationProvider extends AbstractAuthenticationProvider {
                     if (CollectionUtils.isNotEmpty(permissions)) {
                         authorities.addAll(AuthorityUtils.createAuthorityList(permissions.toArray(new String[0])));
                     }
-//                    jwtAuthenticationToken.setAuthorities(authorities);
+                    jwtAuthenticationToken.setAuthorities(authorities);
                 }
+                jwtAuthenticationToken.setAuthenticated(true);
+//                JwtAuthenticationToken newAuth = new JwtAuthenticationToken(authorities);
+//                newAuth.setToken(token);
+//                newAuth.setDetails(userDetails);
+//                newAuth.setAuthenticated(true);
+                return jwtAuthenticationToken;
             }
             return jwtAuthenticationToken;
         } catch (Exception e) {

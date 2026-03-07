@@ -12,7 +12,7 @@ import java.util.Collection;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+public class JwtAuthenticationToken extends AbstractFreeAuthenticationToken {
     private String token;
 
     public JwtAuthenticationToken( ) {

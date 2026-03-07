@@ -18,4 +18,10 @@ public class UserController {
     public String hello2() {
         return "hello2";
     }
+
+    @PreAuthorize("hasAnyAuthority('say3')")
+    @RequestMapping("/hello3")
+    public String hello3() {
+        return "hello3";
+    }
 }

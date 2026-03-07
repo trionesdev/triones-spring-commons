@@ -19,7 +19,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationFilter {
     }
 
     @Override
-    public JwtAuthenticationToken attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader(AUTHORIZATION);
         if (StringUtils.isNotBlank(token)) {
             token = token.replace("Bearer", "").trim();
@@ -29,10 +29,13 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationFilter {
                 token = request.getParameter(securityTokenConfig.getTokenKey());
             }
         }
-        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken( );
+        if (StringUtils.isBlank(token)) {
+            return null;
+        }
+        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken();
         jwtAuthenticationToken.setToken(token);
         Authentication authentication = this.authenticationManager.authenticate(jwtAuthenticationToken);
-        return (JwtAuthenticationToken) authentication;
+        return authentication;
     }
 
 }

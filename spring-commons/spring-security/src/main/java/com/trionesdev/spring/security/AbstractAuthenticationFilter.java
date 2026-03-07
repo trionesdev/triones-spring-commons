@@ -1,5 +1,6 @@
 package com.trionesdev.spring.security;
 
+import com.trionesdev.spring.security.jwt.JwtAuthenticationToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +53,7 @@ public abstract class AbstractAuthenticationFilter extends OncePerRequestFilter 
 
     public Authentication getAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return  authentication;
+        return authentication;
     }
 
     public abstract Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response);
@@ -60,20 +61,14 @@ public abstract class AbstractAuthenticationFilter extends OncePerRequestFilter 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Authentication authenticationResult = attemptAuthentication(request, response);
-        if (authenticationResult == null) {
-            return;
+        if (authenticationResult != null && authenticationResult.isAuthenticated()) {
+            setAuthentication(authenticationResult);
         }
-        if (authorityManager != null){
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            List<String> roles = authorityManager.getRoles(authenticationResult);
-            List<String> permissions = authorityManager.getPermissions(authenticationResult);
-        }
-        setAuthentication(authenticationResult);
         if (authProcessor != null) {
             authProcessor.before(getAuthentication());
         }
         filterChain.doFilter(request, response);
-        if (authProcessor != null) {
+        if (authenticationResult != null && authProcessor != null) {
             authProcessor.after(getAuthentication());
         }
     }
