@@ -38,7 +38,8 @@ public class SecurityTokenConfig {
      */
     @Builder.Default
     private String secret = "trionesdev_secret";
-
+    @Builder.Default
+    private Boolean enableRefresh = true;
 
 
 

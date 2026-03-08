@@ -4,17 +4,15 @@ import com.trionesdev.spring.security.AbstractAuthenticationProvider;
 import com.trionesdev.spring.security.AuthorityManager;
 import com.trionesdev.spring.security.SecurityTokenConfig;
 import com.trionesdev.spring.security.token.TokenStorage;
+import com.trionesdev.spring.security.util.AuthUtils;
 import com.trionesdev.spring.security.util.JwtUtils;
 import com.trionesdev.spring.security.web.TokenAuthenticationToken;
 import com.trionesdev.spring.security.web.TokenUserDetails;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,22 +35,10 @@ public class JwtAuthenticationProvider extends AbstractAuthenticationProvider {
         try {
             Map<String, Object> claims = JwtUtils.parse(token, config.getSecret());
             if (claims != null) {
-
                 TokenUserDetails userDetails = TokenUserDetails.builder().claims(claims).build();
                 tokenAuthenticationToken.setDetails(userDetails);
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                if (authorityManager != null) {
-                    List<String> roles = authorityManager.getRoles(tokenAuthenticationToken);
-                    List<String> permissions = authorityManager.getPermissions(tokenAuthenticationToken);
-                    if (CollectionUtils.isNotEmpty(roles)) {
-                        String[] roleArray = roles.stream().map(role -> "ROLE_" + role).distinct().toArray(String[]::new);
-                        authorities.addAll(AuthorityUtils.createAuthorityList(roleArray));
-                    }
-                    if (CollectionUtils.isNotEmpty(permissions)) {
-                        authorities.addAll(AuthorityUtils.createAuthorityList(permissions.toArray(new String[0])));
-                    }
-                    tokenAuthenticationToken.setAuthorities(authorities);
-                }
+                List<GrantedAuthority> authorities = AuthUtils.getAuthorities(authorityManager, tokenAuthenticationToken);
+                tokenAuthenticationToken.setAuthorities(authorities);
                 tokenAuthenticationToken.setAuthenticated(true);
                 return tokenAuthenticationToken;
             }

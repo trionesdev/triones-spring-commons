@@ -1,6 +1,7 @@
 package com.trionesdev.security.demo;
 
 import com.trionesdev.spring.security.*;
+import com.trionesdev.spring.security.token.DefaultTokenStorage;
 import com.trionesdev.spring.security.token.TokenStorage;
 import com.trionesdev.spring.security.web.TokenAuthenticationExecutor;
 import com.trionesdev.spring.security.web.token.TokenAuthenticationProvider;
@@ -10,6 +11,7 @@ import com.trionesdev.spring.security.web.GeneralAuthenticationConfigurer;
 import com.trionesdev.spring.security.web.TokenAccessDeniedHandler;
 import com.trionesdev.spring.security.web.TokenAuthenticationEntryPoint;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -28,9 +30,15 @@ import java.util.List;
 public class SecurityConfiguration {
 
     @Bean
-    public TokenManager tokenManager() {
+    @ConditionalOnMissingBean(TokenStorage.class)
+    public TokenStorage tokenStorage() {
+        return new DefaultTokenStorage();
+    }
+
+    @Bean
+    public TokenManager tokenManager(TokenStorage tokenStorage) {
         SecurityTokenConfig config = new SecurityTokenConfig();
-        return new DefaultTokenManager(config);
+        return new DefaultTokenManager(config, tokenStorage);
     }
 
     @Bean

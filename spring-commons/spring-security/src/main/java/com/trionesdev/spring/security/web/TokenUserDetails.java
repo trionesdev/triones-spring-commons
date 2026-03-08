@@ -9,5 +9,5 @@ import java.util.Map;
 @SuperBuilder
 public class TokenUserDetails {
     private Object subject;
-    private Map<String, Object> claims;
+    private Object claims;
 }
