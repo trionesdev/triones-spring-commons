@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security;
+package com.trionesdev.spring.security.web;
 
 import com.alibaba.fastjson2.JSON;
 import com.trionesdev.commons.exception.ErrorResponse;
@@ -16,7 +16,7 @@ import java.io.IOException;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @Slf4j
-public class JsonAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class TokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {

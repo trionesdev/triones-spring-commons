@@ -1,5 +1,8 @@
-package com.trionesdev.spring.security;
+package com.trionesdev.spring.security.web;
 
+import com.trionesdev.spring.security.AbstractAuthenticationExecutor;
+import com.trionesdev.spring.security.AuthenticationInterceptor;
+import com.trionesdev.spring.security.web.GeneralAuthenticationFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;

@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security.jwt;
+package com.trionesdev.spring.security.web;
 
 import com.trionesdev.spring.security.AbstractAuthenticationExecutor;
 import com.trionesdev.spring.security.SecurityTokenConfig;
@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 
-public class JwtAuthenticationExecutor extends AbstractAuthenticationExecutor {
-    public JwtAuthenticationExecutor(SecurityTokenConfig securityTokenConfig) {
+public class TokenAuthenticationExecutor extends AbstractAuthenticationExecutor {
+    public TokenAuthenticationExecutor(SecurityTokenConfig securityTokenConfig) {
         super(securityTokenConfig);
     }
 
@@ -18,9 +18,9 @@ public class JwtAuthenticationExecutor extends AbstractAuthenticationExecutor {
         if (StringUtils.isBlank(token)) {
             return null;
         }
-        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken();
-        jwtAuthenticationToken.setToken(token);
-        Authentication authentication = this.authenticationManager.authenticate(jwtAuthenticationToken);
+        TokenAuthenticationToken tokenAuthenticationToken = new TokenAuthenticationToken();
+        tokenAuthenticationToken.setToken(token);
+        Authentication authentication = this.authenticationManager.authenticate(tokenAuthenticationToken);
         return authentication;
     }
 

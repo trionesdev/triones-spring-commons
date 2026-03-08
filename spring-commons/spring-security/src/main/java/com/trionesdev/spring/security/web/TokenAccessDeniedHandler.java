@@ -1,4 +1,4 @@
-package com.trionesdev.spring.security;
+package com.trionesdev.spring.security.web;
 
 import com.alibaba.fastjson2.JSON;
 import com.trionesdev.commons.exception.ErrorResponse;
@@ -8,10 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationTrustResolver;
-import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
@@ -19,7 +15,7 @@ import java.io.IOException;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @Slf4j
-public class JsonAccessDeniedHandler implements AccessDeniedHandler {
+public class TokenAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         if (log.isWarnEnabled()) {

@@ -1,7 +1,7 @@
 package com.trionesdev.spring.security.token;
 
 public interface TokenManager  {
-    Token createToken(TokenDefinition tokenDefinition);
+    SecurityToken createToken(TokenDefinition tokenDefinition);
 
-    Token logout(String token);
+    SecurityToken logout(String token);
 }

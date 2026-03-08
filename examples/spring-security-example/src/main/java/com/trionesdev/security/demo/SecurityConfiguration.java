@@ -1,10 +1,13 @@
 package com.trionesdev.security.demo;
 
 import com.trionesdev.spring.security.*;
-import com.trionesdev.spring.security.jwt.JwtAuthenticationExecutor;
-import com.trionesdev.spring.security.jwt.JwtAuthenticationProvider;
-import com.trionesdev.spring.security.jwt.JwtTokenManager;
+import com.trionesdev.spring.security.web.TokenAuthenticationExecutor;
+import com.trionesdev.spring.security.web.TokenAuthenticationProvider;
+import com.trionesdev.spring.security.web.DefaultTokenManager;
 import com.trionesdev.spring.security.token.TokenManager;
+import com.trionesdev.spring.security.web.GeneralAuthenticationConfigurer;
+import com.trionesdev.spring.security.web.TokenAccessDeniedHandler;
+import com.trionesdev.spring.security.web.TokenAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -25,7 +28,7 @@ public class SecurityConfiguration {
     @Bean
     public TokenManager tokenManager() {
         SecurityTokenConfig config = new SecurityTokenConfig();
-        return new JwtTokenManager(config);
+        return new DefaultTokenManager(config);
     }
 
     @Bean
@@ -52,12 +55,12 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationInterceptor processor, AuthorityManager authorityManager) throws Exception {
 
         SecurityTokenConfig config = new SecurityTokenConfig();
-        var authExecutor = new JwtAuthenticationExecutor(config);
+        var authExecutor = new TokenAuthenticationExecutor(config);
 
         GeneralAuthenticationConfigurer<HttpSecurity> authConfigurer = new GeneralAuthenticationConfigurer<>(authExecutor);
         authConfigurer.setAuthenticationInterceptor(processor);
 
-        http.authenticationProvider(new JwtAuthenticationProvider(config, authorityManager))
+        http.authenticationProvider(new TokenAuthenticationProvider(config, authorityManager))
                 .csrf(AbstractHttpConfigurer::disable)
 //                .anonymous(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
@@ -65,8 +68,8 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated())
                 .with(authConfigurer, Customizer.withDefaults())
                 .exceptionHandling(e ->
-                        e.authenticationEntryPoint(new JsonAuthenticationEntryPoint())
-                                .accessDeniedHandler(new JsonAccessDeniedHandler()))
+                        e.authenticationEntryPoint(new TokenAuthenticationEntryPoint())
+                                .accessDeniedHandler(new TokenAccessDeniedHandler()))
         ;
         return http.build();
     }

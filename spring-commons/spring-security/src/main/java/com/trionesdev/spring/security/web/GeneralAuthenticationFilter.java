@@ -1,5 +1,6 @@
-package com.trionesdev.spring.security;
+package com.trionesdev.spring.security.web;
 
+import com.trionesdev.spring.security.AbstractAuthenticationExecutor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
