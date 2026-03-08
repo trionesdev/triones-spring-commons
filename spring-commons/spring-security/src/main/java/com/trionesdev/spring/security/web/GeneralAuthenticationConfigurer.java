@@ -7,6 +7,10 @@ import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * 通用认证配置器
+ * @param <H>
+ */
 public class GeneralAuthenticationConfigurer<H extends HttpSecurityBuilder<H>>
         extends AbstractHttpConfigurer<GeneralAuthenticationConfigurer<H>, H> {
     private final AuthenticationExecutor authExecutor;

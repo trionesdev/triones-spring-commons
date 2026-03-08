@@ -1,19 +1,20 @@
-package com.trionesdev.spring.security.web;
+package com.trionesdev.spring.security.web.jwt;
 
 import com.trionesdev.spring.security.SecurityTokenConfig;
 import com.trionesdev.spring.security.token.SecurityToken;
 import com.trionesdev.spring.security.token.TokenDefinition;
 import com.trionesdev.spring.security.util.JwtUtils;
+import com.trionesdev.spring.security.web.AbstractTokenManager;
 
-public class DefaultTokenManager extends AbstractTokenManager {
+public class JwtTokenManager extends AbstractTokenManager {
 
-    public DefaultTokenManager(SecurityTokenConfig config) {
+    public JwtTokenManager(SecurityTokenConfig config) {
         super(config);
     }
 
     @Override
     public SecurityToken createToken(TokenDefinition tokenDefinition) {
-        String token = JwtUtils.serialize(tokenDefinition.getSubject(), config.getJwt().getSecret(), tokenDefinition.getClaims(), config.getExpires());
+        String token = JwtUtils.serialize(tokenDefinition.getSubject(), config.getSecret(), tokenDefinition.getClaims(), config.getExpires());
         return SecurityToken.builder()
                 .accessToken(token)
                 .build();

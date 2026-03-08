@@ -1,5 +1,11 @@
 package com.trionesdev.spring.security.token;
 
-public interface TokenStorage {
+import java.util.Map;
 
+public interface TokenStorage {
+    Map<String, Object> get(String key);
+
+    void set(String key, String value);
+
+    void remove(String key);
 }

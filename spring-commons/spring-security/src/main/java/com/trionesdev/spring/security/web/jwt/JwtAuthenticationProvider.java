@@ -1,9 +1,12 @@
-package com.trionesdev.spring.security.web;
+package com.trionesdev.spring.security.web.jwt;
 
 import com.trionesdev.spring.security.AbstractAuthenticationProvider;
 import com.trionesdev.spring.security.AuthorityManager;
 import com.trionesdev.spring.security.SecurityTokenConfig;
+import com.trionesdev.spring.security.token.TokenStorage;
 import com.trionesdev.spring.security.util.JwtUtils;
+import com.trionesdev.spring.security.web.TokenAuthenticationToken;
+import com.trionesdev.spring.security.web.TokenUserDetails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -15,10 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TokenAuthenticationProvider extends AbstractAuthenticationProvider {
+/**
+ * Jwt认证提供者
+ */
+public class JwtAuthenticationProvider extends AbstractAuthenticationProvider {
 
-    public TokenAuthenticationProvider(SecurityTokenConfig config, AuthorityManager authorityManager) {
-        super(config, authorityManager);
+    public JwtAuthenticationProvider(SecurityTokenConfig config, AuthorityManager authorityManager, TokenStorage tokenStorage) {
+        super(config, authorityManager, tokenStorage);
     }
 
     @Override
@@ -29,7 +35,7 @@ public class TokenAuthenticationProvider extends AbstractAuthenticationProvider 
             return tokenAuthenticationToken;
         }
         try {
-            Map<String, Object> claims = JwtUtils.parse(token, config.getJwt().getSecret());
+            Map<String, Object> claims = JwtUtils.parse(token, config.getSecret());
             if (claims != null) {
 
                 TokenUserDetails userDetails = TokenUserDetails.builder().claims(claims).build();

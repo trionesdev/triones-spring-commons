@@ -1,13 +1,15 @@
 package com.trionesdev.security.demo;
 
 import com.trionesdev.spring.security.*;
+import com.trionesdev.spring.security.token.TokenStorage;
 import com.trionesdev.spring.security.web.TokenAuthenticationExecutor;
-import com.trionesdev.spring.security.web.TokenAuthenticationProvider;
-import com.trionesdev.spring.security.web.DefaultTokenManager;
+import com.trionesdev.spring.security.web.token.TokenAuthenticationProvider;
+import com.trionesdev.spring.security.web.token.DefaultTokenManager;
 import com.trionesdev.spring.security.token.TokenManager;
 import com.trionesdev.spring.security.web.GeneralAuthenticationConfigurer;
 import com.trionesdev.spring.security.web.TokenAccessDeniedHandler;
 import com.trionesdev.spring.security.web.TokenAuthenticationEntryPoint;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -52,7 +54,9 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationInterceptor processor, AuthorityManager authorityManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationInterceptor processor, AuthorityManager authorityManager,
+                                                   ObjectProvider<TokenStorage> tokenStorage
+    ) throws Exception {
 
         SecurityTokenConfig config = new SecurityTokenConfig();
         var authExecutor = new TokenAuthenticationExecutor(config);
@@ -60,7 +64,7 @@ public class SecurityConfiguration {
         GeneralAuthenticationConfigurer<HttpSecurity> authConfigurer = new GeneralAuthenticationConfigurer<>(authExecutor);
         authConfigurer.setAuthenticationInterceptor(processor);
 
-        http.authenticationProvider(new TokenAuthenticationProvider(config, authorityManager))
+        http.authenticationProvider(new TokenAuthenticationProvider(config, authorityManager, tokenStorage.getIfAvailable()))
                 .csrf(AbstractHttpConfigurer::disable)
 //                .anonymous(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests

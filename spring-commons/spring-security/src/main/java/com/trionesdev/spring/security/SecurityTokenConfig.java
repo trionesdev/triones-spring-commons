@@ -21,23 +21,26 @@ public class SecurityTokenConfig {
     private int expires = 86400;
     @Builder.Default
     private int refreshExpires = 2592000;
+    /**
+     * token风格，只对非jwt时候生效
+     */
     @Builder.Default
     private TokenStyle tokenStyle = TokenStyle.uuid;
+    /**
+     * 是否使用jwt
+     */
     @Builder.Default
-    private Jwt jwt = new Jwt();
+    private AuthType authType = AuthType.jwt;
+    @Builder.Default
+    private TokenType tokenType = TokenType.jwt;
+    /**
+     * jwt密钥
+     */
+    @Builder.Default
+    private String secret = "trionesdev_secret";
 
-    @Data
-    @SuperBuilder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Jwt {
-        @Builder.Default
-        private Boolean enabled = false;
-        @Builder.Default
-        private String secret = "trionesdev_secret";
-    }
 
-    public enum TokenStyle {
-        uuid, simpleUuid
-    }
+
+
+
 }

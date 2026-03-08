@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * 通用token认证过滤器
+ */
 public class GeneralAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationExecutor authenticationExecutor;
 
