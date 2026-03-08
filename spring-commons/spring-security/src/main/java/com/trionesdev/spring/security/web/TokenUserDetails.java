@@ -8,6 +8,6 @@ import java.util.Map;
 @Data
 @SuperBuilder
 public class TokenUserDetails {
-    private String subject;
+    private Object subject;
     private Map<String, Object> claims;
 }

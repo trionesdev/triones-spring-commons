@@ -23,7 +23,7 @@ public abstract class AbstractAuthenticationExecutor implements AuthenticationEx
         this.authenticationManager = authenticationManager;
     }
 
-    public void setAuthProcessor(AuthenticationInterceptor authenticationInterceptor) {
+    public void setAuthenticationInterceptor(AuthenticationInterceptor authenticationInterceptor) {
         this.authenticationInterceptor = authenticationInterceptor;
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractAuthenticationExecutor implements AuthenticationEx
                 authenticationInterceptor.before(getAuthentication());
             }
             filterChain.doFilter(request, response);
-            if (authenticationResult != null && authenticationInterceptor != null) {
+            if (authenticationInterceptor != null) {
                 authenticationInterceptor.after(getAuthentication());
             }
         } catch (Exception e) {

@@ -1,15 +1,15 @@
 package com.trionesdev.spring.security.web;
 
-import com.trionesdev.spring.security.AbstractAuthenticationExecutor;
+import com.trionesdev.spring.security.AuthenticationExecutor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class GeneralAuthenticationFilter extends OncePerRequestFilter {
-    private final AbstractAuthenticationExecutor authenticationExecutor;
+    private final AuthenticationExecutor authenticationExecutor;
 
-    public GeneralAuthenticationFilter(AbstractAuthenticationExecutor authenticationExecutor) {
+    public GeneralAuthenticationFilter(AuthenticationExecutor authenticationExecutor) {
         this.authenticationExecutor = authenticationExecutor;
     }
 

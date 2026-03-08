@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AccountController {
     private final TokenManager tokenManager;
-    @PostMapping("/login1")
+    @PostMapping("/login")
     public SecurityToken login() {
         return tokenManager.createToken(TokenDefinition.builder().subject("123").build());
     }

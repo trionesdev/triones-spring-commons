@@ -22,16 +22,22 @@ public class SecurityTokenConfig {
     @Builder.Default
     private int refreshExpires = 2592000;
     @Builder.Default
+    private TokenStyle tokenStyle = TokenStyle.uuid;
+    @Builder.Default
     private Jwt jwt = new Jwt();
 
     @Data
     @SuperBuilder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Jwt{
+    public static class Jwt {
         @Builder.Default
         private Boolean enabled = false;
         @Builder.Default
         private String secret = "trionesdev_secret";
+    }
+
+    public enum TokenStyle {
+        uuid, simpleUuid
     }
 }

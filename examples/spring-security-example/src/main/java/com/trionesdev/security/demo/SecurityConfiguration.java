@@ -64,7 +64,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
 //                .anonymous(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/login1", "/profile").permitAll()
+                        .requestMatchers("/login", "/profile").permitAll()
                         .anyRequest().authenticated())
                 .with(authConfigurer, Customizer.withDefaults())
                 .exceptionHandling(e ->
