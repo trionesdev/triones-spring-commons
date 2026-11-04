@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JwtTokenConfig {
-    private Boolean remote = false;
-    private String issuerUri;
-    private String protocol;
     private String secret;
     private int expiration;
 }

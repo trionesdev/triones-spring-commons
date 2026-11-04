@@ -15,6 +15,7 @@ import com.trionesdev.commons.context.actor.ActorContext;
 import com.trionesdev.commons.core.jwt.JwtTokenFacade;
 import com.trionesdev.spring.security.ActorAuthoritiesResolver;
 import com.trionesdev.spring.security.DefaultActorAuthoritiesResolver;
+import com.trionesdev.spring.security.ResourceServerConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,12 +32,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.trionesdev.commons.context.actor.ActorConstants.X_TRACE_ID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -46,18 +42,19 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
-
-    private final JwtTokenConfig jwtTokenConfig;
+    private final ResourceServerConfig resourceServerConfig;
     private final JwtTokenFacade jwtFacade;
     private final ActorContext actorContext;
     private final JwtActorResolver jwtActorResolver;
     private final ActorAuthoritiesResolver actorAuthoritiesResolver;
     private volatile JWTProcessor<SecurityContext> remoteJwtProcessor;
 
-    public JwtAuthenticationFilter(JwtTokenConfig jwtTokenConfig, JwtTokenFacade jwtFacade,
+    public JwtAuthenticationFilter(ResourceServerConfig resourceServerConfig,
+                                   JwtTokenFacade jwtFacade,
                                    ActorContext actorContext, JwtActorResolver jwtActorResolver,
                                    ActorAuthoritiesResolver actorAuthoritiesResolver) {
-        this.jwtTokenConfig = Objects.requireNonNull(jwtTokenConfig, "jwtTokenConfig");
+
+        this.resourceServerConfig = Objects.requireNonNull(resourceServerConfig, "resourceServerConfig");
         this.jwtFacade = jwtFacade;
         this.actorContext = Objects.requireNonNull(actorContext, "actorContext");
         this.jwtActorResolver = jwtActorResolver != null ? jwtActorResolver : new DefaultJwtActorResolver();
@@ -82,13 +79,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = resolveToken(request);
             if (StringUtils.isNotBlank(token)) {
                 try {
-                    // Preserve the existing local claims endpoint behavior.
-                    if (BooleanUtils.isFalse(jwtTokenConfig.getRemote())
-                            && Objects.equals(request.getRequestURI(),jwtTokenConfig.getIssuerUri())) {
-                        response.setContentType(APPLICATION_JSON_VALUE);
-                        response.getWriter().write(JSON.toJSONString(jwtFacade.parse(token)));
-                        return;
-                    }
                     authenticate(token, traceId);
                 } catch (Exception ex) {
                     // Continue anonymously; authorization remains the security chain's responsibility.
@@ -134,8 +124,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return false;
     }
 
-    private void authenticate(String token, String traceId) throws IOException, ParseException, JOSEException {
-        Map<String, Object> claims = BooleanUtils.isTrue(jwtTokenConfig.getRemote())
+    /**
+     * Authenticates the request JWT and sets the security context.
+     * 启用 Resource Server 则进行远程解析，否则本地解析
+     * @param token
+     * @param traceId
+     * @throws IOException
+     */
+    private void authenticate(String token, String traceId) throws IOException {
+        Map<String, Object> claims = BooleanUtils.isTrue(resourceServerConfig.getEnabled())
                 ? remoteClaims(token) : jwtFacade.parse(token).getClaims();
         if (claims == null) {
             return;
@@ -185,7 +182,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             synchronized (this) {
                 if (remoteJwtProcessor == null) {
                     JWKSource<SecurityContext> jwkSource = JWKSourceBuilder
-                            .<SecurityContext>create(new URL(jwtTokenConfig.getIssuerUri()))
+                            .<SecurityContext>create(new URL(resourceServerConfig.getJwt().getJwkSetUri()))
                             .build();
                     Set<JWSAlgorithm> algorithms = new HashSet<>(JWSAlgorithm.Family.RSA);
                     algorithms.addAll(JWSAlgorithm.Family.EC);

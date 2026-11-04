@@ -10,31 +10,29 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
 import com.sun.net.httpserver.HttpServer;
-import org.junit.jupiter.api.Test;
 import com.trionesdev.commons.context.actor.Actor;
 import com.trionesdev.commons.context.actor.ActorContext;
+import com.trionesdev.spring.security.ResourceServerConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static com.trionesdev.commons.context.actor.ActorConstants.X_TRACE_ID;
+import static org.junit.jupiter.api.Assertions.*;
 
 class JwtAuthenticationFilterTest {
     @Test
@@ -54,9 +52,9 @@ class JwtAuthenticationFilterTest {
         server.start();
         try {
             JwtTokenConfig config = new JwtTokenConfig();
-            config.setRemote(true);
+            ResourceServerConfig resourceServerConfig = new ResourceServerConfig();
 
-            JwtAuthenticationFilter filter = new JwtAuthenticationFilter(config, null, new ActorContext(), null, null);
+            JwtAuthenticationFilter filter = new JwtAuthenticationFilter(resourceServerConfig, null, new ActorContext(), null, null);
             JWTClaimsSet claims = new JWTClaimsSet.Builder().subject("user-1")
                     .expirationTime(Date.from(Instant.now().plusSeconds(300))).build();
             String token = sign(key, claims);
@@ -79,8 +77,8 @@ class JwtAuthenticationFilterTest {
     void setsAuthenticationAndCleansActorWhenDownstreamFails() throws Exception {
         ActorContext context = new ActorContext();
         JwtTokenConfig config = new JwtTokenConfig();
-        config.setRemote(true);
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(config, null, context,
+        ResourceServerConfig resourceServerConfig = new ResourceServerConfig();
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(resourceServerConfig, null, context,
                 claims -> Actor.builder().actorId("user-1").role("ADMIN").build(),
                 actor -> List.of(new SimpleGrantedAuthority("READ"))) {
             @Override
@@ -113,9 +111,8 @@ class JwtAuthenticationFilterTest {
     void failedWebSocketTokenContinuesWithoutAuthenticationAndCleansContext() throws Exception {
         ActorContext context = new ActorContext();
         AtomicInteger calls = new AtomicInteger();
-        JwtTokenConfig config = new JwtTokenConfig();
-        config.setRemote(true);
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(config, null, context, null, null) {
+        ResourceServerConfig resourceServerConfig = new ResourceServerConfig();
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(resourceServerConfig, null, context, null, null) {
             @Override
             public Map<String, Object> remoteClaims(String token) throws IOException {
                 calls.incrementAndGet();
