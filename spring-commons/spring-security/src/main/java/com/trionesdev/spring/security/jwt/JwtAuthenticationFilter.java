@@ -1,6 +1,5 @@
 package com.trionesdev.spring.security.jwt;
 
-import com.alibaba.fastjson2.JSON;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -12,6 +11,7 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.jwt.proc.JWTProcessor;
 import com.trionesdev.commons.context.actor.Actor;
 import com.trionesdev.commons.context.actor.ActorContext;
+import com.trionesdev.commons.core.jwt.JwtFacade;
 import com.trionesdev.commons.core.jwt.JwtTokenFacade;
 import com.trionesdev.spring.security.ActorAuthoritiesResolver;
 import com.trionesdev.spring.security.DefaultActorAuthoritiesResolver;
@@ -36,21 +36,20 @@ import java.util.*;
 
 import static com.trionesdev.commons.context.actor.ActorConstants.X_TRACE_ID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
     private final ResourceServerConfig resourceServerConfig;
-    private final JwtTokenFacade jwtFacade;
+    private final JwtFacade jwtFacade;
     private final ActorContext actorContext;
     private final JwtActorResolver jwtActorResolver;
     private final ActorAuthoritiesResolver actorAuthoritiesResolver;
     private volatile JWTProcessor<SecurityContext> remoteJwtProcessor;
 
     public JwtAuthenticationFilter(ResourceServerConfig resourceServerConfig,
-                                   JwtTokenFacade jwtFacade,
+                                   JwtFacade jwtFacade,
                                    ActorContext actorContext, JwtActorResolver jwtActorResolver,
                                    ActorAuthoritiesResolver actorAuthoritiesResolver) {
 
@@ -161,7 +160,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .userId(actor.getUserId())
                 .role(actor.getRole())
                 .tenantId(actor.getTenantId())
-                .tenantMemberId(actor.getTenantMemberId())
                 .attributes(actor.getAttributes())
                 .build();
     }
@@ -182,7 +180,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             synchronized (this) {
                 if (remoteJwtProcessor == null) {
                     JWKSource<SecurityContext> jwkSource = JWKSourceBuilder
-                            .<SecurityContext>create(new URL(resourceServerConfig.getJwt().getJwkSetUri()))
+                            .create(new URL(resourceServerConfig.getJwt().getJwkSetUri()))
                             .build();
                     Set<JWSAlgorithm> algorithms = new HashSet<>(JWSAlgorithm.Family.RSA);
                     algorithms.addAll(JWSAlgorithm.Family.EC);
