@@ -19,7 +19,6 @@ public class ResourceServerConfig {
     @NoArgsConstructor
     public static class Jwt {
         private String issuerUri;
-        private String tokenUri;
         private String jwkSetUri;
     }
 }

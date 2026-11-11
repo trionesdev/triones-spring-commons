@@ -39,6 +39,12 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
         </dependency>
+        <!-- 可选：使用 AuthorizedClientFeignRequestInterceptor 时由使用方引入 -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-core</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <!--        trionesdev-->
         <dependency>
