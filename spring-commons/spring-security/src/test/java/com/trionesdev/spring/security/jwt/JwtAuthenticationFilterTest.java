@@ -51,8 +51,8 @@ class JwtAuthenticationFilterTest {
         });
         server.start();
         try {
-            JwtTokenConfig config = new JwtTokenConfig();
-            ResourceServerConfig resourceServerConfig = new ResourceServerConfig();
+            ResourceServerConfig resourceServerConfig = remoteConfig(
+                    "http://127.0.0.1:" + server.getAddress().getPort() + "/jwt/issuer");
 
             JwtAuthenticationFilter filter = new JwtAuthenticationFilter(resourceServerConfig, null, new ActorContext(), null, null);
             JWTClaimsSet claims = new JWTClaimsSet.Builder().subject("user-1")
@@ -76,8 +76,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void setsAuthenticationAndCleansActorWhenDownstreamFails() throws Exception {
         ActorContext context = new ActorContext();
-        JwtTokenConfig config = new JwtTokenConfig();
-        ResourceServerConfig resourceServerConfig = new ResourceServerConfig();
+        ResourceServerConfig resourceServerConfig = remoteConfig("http://127.0.0.1/unused");
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(resourceServerConfig, null, context,
                 claims -> Actor.builder().actorId("user-1").role("ADMIN").build(),
                 actor -> List.of(new SimpleGrantedAuthority("READ"))) {
@@ -111,7 +110,7 @@ class JwtAuthenticationFilterTest {
     void failedWebSocketTokenContinuesWithoutAuthenticationAndCleansContext() throws Exception {
         ActorContext context = new ActorContext();
         AtomicInteger calls = new AtomicInteger();
-        ResourceServerConfig resourceServerConfig = new ResourceServerConfig();
+        ResourceServerConfig resourceServerConfig = remoteConfig("http://127.0.0.1/unused");
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(resourceServerConfig, null, context, null, null) {
             @Override
             public Map<String, Object> remoteClaims(String token) throws IOException {
@@ -134,6 +133,13 @@ class JwtAuthenticationFilterTest {
             context.resetActor();
             SecurityContextHolder.clearContext();
         }
+    }
+
+    private static ResourceServerConfig remoteConfig(String jwkSetUri) {
+        ResourceServerConfig config = new ResourceServerConfig();
+        config.setEnabled(true);
+        config.getJwt().setJwkSetUri(jwkSetUri);
+        return config;
     }
 
     private HttpServletRequest request(Map<String, String> headers, String token) {

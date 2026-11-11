@@ -1,18 +1,10 @@
 package com.trionesdev.spring.security.jwt;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
-import com.nimbusds.jose.proc.BadJOSEException;
-import com.nimbusds.jose.proc.JWSVerificationKeySelector;
-import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import com.nimbusds.jwt.proc.JWTProcessor;
 import com.trionesdev.commons.context.actor.Actor;
+import com.trionesdev.spring.security.auth.client.jwks.JwkSetJwtVerifier;
+import com.trionesdev.spring.security.auth.client.jwks.JwtVerificationException;
 import com.trionesdev.commons.context.actor.ActorContext;
 import com.trionesdev.commons.core.jwt.JwtFacade;
-import com.trionesdev.commons.core.jwt.JwtTokenFacade;
 import com.trionesdev.spring.security.ActorAuthoritiesResolver;
 import com.trionesdev.spring.security.DefaultActorAuthoritiesResolver;
 import com.trionesdev.spring.security.ResourceServerConfig;
@@ -29,8 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.net.URL;
-import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
 
@@ -46,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ActorContext actorContext;
     private final JwtActorResolver jwtActorResolver;
     private final ActorAuthoritiesResolver actorAuthoritiesResolver;
-    private volatile JWTProcessor<SecurityContext> remoteJwtProcessor;
+    private volatile JwkSetJwtVerifier remoteJwtVerifier;
 
     public JwtAuthenticationFilter(ResourceServerConfig resourceServerConfig,
                                    JwtFacade jwtFacade,
@@ -165,31 +155,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Fetches the remote JWKS and verifies the token before returning its claims.
+     * 通过 jwk-set-uri 获取授权服务器公钥（{@link JwkSetJwtVerifier}，带缓存）并校验 token。
      */
     public Map<String, Object> remoteClaims(String token) throws IOException {
         try {
-            return getRemoteJwtProcessor().process(token, null).getClaims();
-        } catch (ParseException | BadJOSEException | JOSEException ex) {
+            return getRemoteJwtVerifier().verify(token);
+        } catch (JwtVerificationException | IllegalArgumentException ex) {
             throw new IOException("Failed to verify remote JWT", ex);
         }
     }
 
-    private JWTProcessor<SecurityContext> getRemoteJwtProcessor() throws IOException {
-        if (remoteJwtProcessor == null) {
+    private JwkSetJwtVerifier getRemoteJwtVerifier() {
+        if (remoteJwtVerifier == null) {
             synchronized (this) {
-                if (remoteJwtProcessor == null) {
-                    JWKSource<SecurityContext> jwkSource = JWKSourceBuilder
-                            .create(new URL(resourceServerConfig.getJwt().getJwkSetUri()))
-                            .build();
-                    Set<JWSAlgorithm> algorithms = new HashSet<>(JWSAlgorithm.Family.RSA);
-                    algorithms.addAll(JWSAlgorithm.Family.EC);
-                    DefaultJWTProcessor<SecurityContext> processor = new DefaultJWTProcessor<>();
-                    processor.setJWSKeySelector(new JWSVerificationKeySelector<>(algorithms, jwkSource));
-                    remoteJwtProcessor = processor;
+                if (remoteJwtVerifier == null) {
+                    remoteJwtVerifier = JwkSetJwtVerifier.withJwkSetUri(resourceServerConfig.getJwt().getJwkSetUri());
                 }
             }
         }
-        return remoteJwtProcessor;
+        return remoteJwtVerifier;
     }
 }
