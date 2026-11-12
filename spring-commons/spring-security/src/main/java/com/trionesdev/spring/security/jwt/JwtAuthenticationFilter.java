@@ -31,19 +31,19 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private final ResourceServerConfig resourceServerConfig;
+
     private final JwtFacade jwtFacade;
     private final ActorContext actorContext;
     private final JwtActorResolver jwtActorResolver;
     private final ActorAuthoritiesResolver actorAuthoritiesResolver;
     private volatile JwkSetJwtVerifier remoteJwtVerifier;
 
-    public JwtAuthenticationFilter(ResourceServerConfig resourceServerConfig,
+    public JwtAuthenticationFilter(
                                    JwtFacade jwtFacade,
                                    ActorContext actorContext, JwtActorResolver jwtActorResolver,
                                    ActorAuthoritiesResolver actorAuthoritiesResolver) {
 
-        this.resourceServerConfig = Objects.requireNonNull(resourceServerConfig, "resourceServerConfig");
+
         this.jwtFacade = jwtFacade;
         this.actorContext = Objects.requireNonNull(actorContext, "actorContext");
         this.jwtActorResolver = jwtActorResolver != null ? jwtActorResolver : new DefaultJwtActorResolver();
@@ -121,8 +121,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @throws IOException
      */
     private void authenticate(String token, String traceId) throws IOException {
-        Map<String, Object> claims = BooleanUtils.isTrue(resourceServerConfig.getEnabled())
-                ? remoteClaims(token) : jwtFacade.parse(token).getClaims();
+        Map<String, Object> claims =   jwtFacade.parse(token).getClaims();
         if (claims == null) {
             return;
         }
@@ -157,22 +156,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /**
      * 通过 jwk-set-uri 获取授权服务器公钥（{@link JwkSetJwtVerifier}，带缓存）并校验 token。
      */
-    public Map<String, Object> remoteClaims(String token) throws IOException {
-        try {
-            return getRemoteJwtVerifier().verify(token);
-        } catch (JwtVerificationException | IllegalArgumentException ex) {
-            throw new IOException("Failed to verify remote JWT", ex);
-        }
-    }
 
-    private JwkSetJwtVerifier getRemoteJwtVerifier() {
-        if (remoteJwtVerifier == null) {
-            synchronized (this) {
-                if (remoteJwtVerifier == null) {
-                    remoteJwtVerifier = JwkSetJwtVerifier.withJwkSetUri(resourceServerConfig.getJwt().getJwkSetUri());
-                }
-            }
-        }
-        return remoteJwtVerifier;
-    }
 }

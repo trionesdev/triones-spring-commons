@@ -14,8 +14,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>6.1.8</spring.version>
-        <spring-security.version>6.3.0</spring-security.version>
+        <spring.version>6.2.19</spring.version>
+        <spring-security.version>6.5.7</spring-security.version>
         <lombok.version>1.18.34</lombok.version>
         <mybatis-plus.version>3.5.6</mybatis-plus.version>
         <jackson.version>2.17.1</jackson.version>
@@ -26,14 +26,14 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
-                <version>6.1.0</version>
+                <version>6.2.19</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-redis</artifactId>
-                <version>3.3.5</version>
+                <version>3.3.10</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
@@ -52,6 +52,16 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
                 <version>${spring-security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-oauth2-resource-server</artifactId>
+                <version>${spring-security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-oauth2-authorization-server</artifactId>
+                <version>1.5.5</version>
             </dependency>
 
             <dependency>
@@ -155,12 +165,17 @@
             </dependency>
             <dependency>
                 <groupId>com.trionesdev.commons</groupId>
-                <artifactId>spring-auth-client</artifactId>
+                <artifactId>spring-security-oauth2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.trionesdev.commons</groupId>
-                <artifactId>spring-authorization-server</artifactId>
+                <artifactId>spring-oauth2-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.trionesdev.commons</groupId>
+                <artifactId>spring-oauth2-authorization-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--moensun commons-->

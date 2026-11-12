@@ -44,7 +44,7 @@
         <!-- 远程校验（JwkSetJwtVerifier）与用户 token 透传（BearerTokenCredentials） -->
         <dependency>
             <groupId>com.trionesdev.commons</groupId>
-            <artifactId>spring-auth-client</artifactId>
+            <artifactId>spring-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
