@@ -41,6 +41,14 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.trionesdev.commons</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.trionesdev.commons</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

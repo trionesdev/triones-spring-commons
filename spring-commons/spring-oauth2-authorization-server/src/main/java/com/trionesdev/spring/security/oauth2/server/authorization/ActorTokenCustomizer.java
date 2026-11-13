@@ -7,6 +7,8 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.Map;
 import java.util.Objects;
 
+import static com.trionesdev.spring.security.oauth2.Oauth2Constants.ACTOR_CLAIMS_KEY;
+
 /**
  * 令牌声明定制：
  * <ul>
@@ -29,7 +31,7 @@ public class ActorTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingCo
         if (Objects.isNull(context.getAuthorization())) {
             return;
         }
-        Map<String, Object> actorClaims = context.getAuthorization().getAttribute(EmbeddedOauth2TokenIssuer.ACTOR_CLAIMS_KEY);
+        Map<String, Object> actorClaims = context.getAuthorization().getAttribute(ACTOR_CLAIMS_KEY);
         if (Objects.nonNull(actorClaims)) {
             actorClaims.forEach((name, value) -> {
                 if (Objects.nonNull(value)) {

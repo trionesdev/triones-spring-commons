@@ -6,6 +6,7 @@ import com.trionesdev.commons.exception.BusinessException;
 import com.trionesdev.commons.exception.TrionesError;
 import com.trionesdev.commons.model.AuthToken;
 import com.trionesdev.spring.security.TokenIssuer;
+import com.trionesdev.spring.security.oauth2.Oauth2Constants;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,10 +49,7 @@ import java.util.Objects;
 public class EmbeddedOauth2TokenIssuer implements TokenIssuer {
     public static final AuthorizationGrantType PLATFORM_GRANT_TYPE =
             new AuthorizationGrantType("urn:triones:params:oauth:grant-type:platform-sign-in");
-    /**
-     * 平台 ACTOR_* 声明在授权记录中的属性名
-     */
-    public static final String ACTOR_CLAIMS_KEY = "triones.actor_claims";
+
     public static final TrionesError INVALID_REFRESH_TOKEN = TrionesError.builder()
             .code("INVALID_REFRESH_TOKEN").message("登录已失效，请重新登录").build();
 
@@ -89,7 +87,7 @@ public class EmbeddedOauth2TokenIssuer implements TokenIssuer {
                 .authorizationGrantType(PLATFORM_GRANT_TYPE)
                 .authorizedScopes(registeredClient.getScopes())
                 .attribute(Principal.class.getName(), principal)
-                .attribute(ACTOR_CLAIMS_KEY, actorClaims);
+                .attribute(Oauth2Constants.ACTOR_CLAIMS_KEY, actorClaims);
         return issueTokens(registeredClient, authorizationBuilder, principal, PLATFORM_GRANT_TYPE, null);
     }
 
