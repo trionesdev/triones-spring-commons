@@ -45,7 +45,7 @@ import java.util.Objects;
  * {@link #PLATFORM_GRANT_TYPE}；该类型不能在 /oauth2/token 使用，只能由本类在进程内签发。
  */
 @AllArgsConstructor
-public class Oauth2TokenIssuer implements TokenIssuer {
+public class EmbeddedOauth2TokenIssuer implements TokenIssuer {
     public static final AuthorizationGrantType PLATFORM_GRANT_TYPE =
             new AuthorizationGrantType("urn:triones:params:oauth:grant-type:platform-sign-in");
     /**
