@@ -23,7 +23,6 @@ public class DefaultJwtActorResolver implements JwtActorResolver {
         String role = Optional.ofNullable(claims.get(ACTOR_ROLE)).map(String::valueOf).orElse(null);
         String tenantId = Optional.ofNullable(claims.get(ACTOR_TENANT_ID)).map(String::valueOf).orElse(null);
         String memberId = Optional.ofNullable(claims.get(ACTOR_MEMBER_ID)).map(String::valueOf).orElse(null);
-        String tenantMemberId = Optional.ofNullable(claims.get(ACTOR_TENANT_MEMBER_ID)).map(String::valueOf).orElse(null);
         Map<String, Object> attributes = Optional.ofNullable(claims.get(ACTOR_ATTRIBUTES))
                 .map(o -> JSON.parseObject(JSON.toJSONString(o), new TypeReference<Map<String, Object>>() {
                 })).orElse(null);
@@ -33,7 +32,6 @@ public class DefaultJwtActorResolver implements JwtActorResolver {
                 .role(role)
                 .tenantId(tenantId)
                 .memberId(memberId)
-                .tenantMemberId(tenantMemberId)
                 .attributes(attributes)
                 .build();
 

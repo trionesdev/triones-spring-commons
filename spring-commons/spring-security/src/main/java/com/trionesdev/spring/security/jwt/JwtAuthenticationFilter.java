@@ -2,18 +2,15 @@ package com.trionesdev.spring.security.jwt;
 
 import com.trionesdev.commons.context.actor.Actor;
 import com.trionesdev.spring.security.auth.client.jwks.JwkSetJwtVerifier;
-import com.trionesdev.spring.security.auth.client.jwks.JwtVerificationException;
 import com.trionesdev.commons.context.actor.ActorContext;
 import com.trionesdev.commons.core.jwt.JwtFacade;
 import com.trionesdev.spring.security.ActorAuthoritiesResolver;
 import com.trionesdev.spring.security.DefaultActorAuthoritiesResolver;
-import com.trionesdev.spring.security.ResourceServerConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
