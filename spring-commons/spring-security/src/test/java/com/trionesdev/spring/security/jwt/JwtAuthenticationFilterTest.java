@@ -6,7 +6,6 @@ import com.trionesdev.commons.context.actor.ActorConstants;
 import com.trionesdev.commons.context.actor.ActorContext;
 import com.trionesdev.commons.core.jwt.JwtConfig;
 import com.trionesdev.commons.core.jwt.JwtFacade;
-import com.trionesdev.spring.security.auth.client.SecurityContextUserTokenResolver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -52,7 +51,7 @@ class JwtAuthenticationFilterTest {
 
         filter.doFilter(request(token), response, (req, res) -> {
             actorInChain.set(actorContext.getActor());
-            relayedToken.set(new SecurityContextUserTokenResolver().resolve());
+            relayedToken.set(((JwtUserDetails) SecurityContextHolder.getContext().getAuthentication().getCredentials()).getToken());
             details.set((JwtUserDetails) SecurityContextHolder.getContext().getAuthentication().getCredentials());
         });
 

@@ -180,11 +180,6 @@
             </dependency>
             <dependency>
                 <groupId>com.trionesdev.commons</groupId>
-                <artifactId>spring-oauth2-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.trionesdev.commons</groupId>
                 <artifactId>spring-oauth2-authorization-server</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -3,7 +3,6 @@ package com.trionesdev.spring.security.oauth2;
 import com.trionesdev.commons.context.actor.Actor;
 import com.trionesdev.commons.context.actor.ActorContext;
 import com.trionesdev.spring.security.DefaultActorAuthoritiesResolver;
-import com.trionesdev.spring.security.auth.client.SecurityContextUserTokenResolver;
 import com.trionesdev.spring.security.jwt.DefaultJwtActorResolver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -72,6 +71,6 @@ class ActorJwtAuthenticationTest {
         assertEquals("10.0.0.9", actorInChain.get().getIpAddress());
         assertEquals("junit", actorInChain.get().getUserAgent());
         assertNotNull(response.getHeader(ActorContextFilter.TRACE_ID_HEADER));
-        assertEquals("raw-token", new SecurityContextUserTokenResolver().resolve());
+        assertEquals("raw-token", ((ActorJwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken().getTokenValue());
     }
 }
