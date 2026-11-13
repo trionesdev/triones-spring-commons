@@ -24,6 +24,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
         </dependency>
@@ -35,13 +40,14 @@
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-        </dependency>
 
         <!--        trionesdev-->
-        <!-- 远程校验（JwkSetJwtVerifier）与用户 token 透传（BearerTokenCredentials） -->
+        <!-- JwtFacade：本地校验 / 解析 JWT -->
+        <dependency>
+            <groupId>com.trionesdev.commons</groupId>
+            <artifactId>commons-core</artifactId>
+        </dependency>
+        <!-- 用户 token 透传：JwtUserDetails 实现 BearerTokenCredentials -->
         <dependency>
             <groupId>com.trionesdev.commons</groupId>
             <artifactId>spring-oauth2-client</artifactId>

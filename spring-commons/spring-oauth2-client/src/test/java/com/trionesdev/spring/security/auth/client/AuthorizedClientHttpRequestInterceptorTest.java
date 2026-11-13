@@ -76,6 +76,12 @@ class AuthorizedClientHttpRequestInterceptorTest {
 
     static class FakeRequest implements HttpRequest {
         private final HttpHeaders headers = new HttpHeaders();
+        private final Map<String, Object> attributes = new java.util.HashMap<>();
+
+        // Spring 6.2 起 HttpRequest 新增 getAttributes()
+        public Map<String, Object> getAttributes() {
+            return attributes;
+        }
 
         @Override
         public HttpMethod getMethod() {

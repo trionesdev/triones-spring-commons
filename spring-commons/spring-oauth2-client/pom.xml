@@ -49,6 +49,12 @@
             <artifactId>fastjson2</artifactId>
         </dependency>
 
+        <!-- 可选：SecurityContextUserTokenResolver 透传 OAuth2 资源服务器认证（JwtAuthenticationToken 等）的 token -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-core</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- 可选：使用 AuthorizedClientHttpRequestInterceptor（RestTemplate / RestClient）时由使用方引入 -->
         <dependency>
             <groupId>org.springframework</groupId>

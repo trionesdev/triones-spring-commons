@@ -1,10 +1,10 @@
 package com.trionesdev.spring.security.jwt;
 
 import com.trionesdev.commons.context.actor.Actor;
-import com.trionesdev.spring.security.auth.client.jwks.JwkSetJwtVerifier;
 import com.trionesdev.commons.context.actor.ActorContext;
 import com.trionesdev.commons.core.jwt.JwtFacade;
 import com.trionesdev.spring.security.ActorAuthoritiesResolver;
+import com.trionesdev.spring.security.ActorRequestSupport;
 import com.trionesdev.spring.security.DefaultActorAuthoritiesResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,10 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
 
-import static com.trionesdev.commons.context.actor.ActorConstants.X_TRACE_ID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
@@ -33,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ActorContext actorContext;
     private final JwtActorResolver jwtActorResolver;
     private final ActorAuthoritiesResolver actorAuthoritiesResolver;
-    private volatile JwkSetJwtVerifier remoteJwtVerifier;
 
     public JwtAuthenticationFilter(
                                    JwtFacade jwtFacade,
@@ -51,21 +50,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String traceId = request.getHeader(X_TRACE_ID);
-        if (StringUtils.isBlank(traceId)) {
-            traceId = UUID.randomUUID().toString();
-        }
-        response.setHeader(X_TRACE_ID, traceId);
-
-        Actor actor = new Actor();
-        actor.setTraceId(traceId);
-        actor.setTime(Instant.now());
+        String traceId = ActorRequestSupport.resolveTraceId(request, response);
+        Actor actor = ActorRequestSupport.fill(new Actor(), request, traceId);
         try {
             actorContext.setActor(actor);
             String token = resolveToken(request);
             if (StringUtils.isNotBlank(token)) {
                 try {
-                    authenticate(token, traceId);
+                    authenticate(token, request, traceId);
                 } catch (Exception ex) {
                     // Continue anonymously; authorization remains the security chain's responsibility.
                     SecurityContextHolder.clearContext();
@@ -111,14 +103,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Authenticates the request JWT and sets the security context.
-     * 启用 Resource Server 则进行远程解析，否则本地解析
-     * @param token
-     * @param traceId
-     * @throws IOException
+     * 用 {@link JwtFacade} 校验并解析 token，写入 ActorContext 与 SecurityContext
      */
-    private void authenticate(String token, String traceId) throws IOException {
-        Map<String, Object> claims =   jwtFacade.parse(token).getClaims();
+    private void authenticate(String token, HttpServletRequest request, String traceId) {
+        Map<String, Object> claims = jwtFacade.parse(token).getClaims();
         if (claims == null) {
             return;
         }
@@ -126,8 +114,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (actor == null) {
             return;
         }
-        actor.setTraceId(traceId);
-        actor.setTime(Instant.now());
+        ActorRequestSupport.fill(actor, request, traceId);
         Collection<? extends GrantedAuthority> authorities = actorAuthoritiesResolver.resolve(actor);
         JwtUserDetails userDetails = createUserDetails(token, actor);
         Authentication authentication =
@@ -146,12 +133,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .userId(actor.getUserId())
                 .role(actor.getRole())
                 .tenantId(actor.getTenantId())
+                .memberId(actor.getMemberId())
+                .tenantMemberId(actor.getTenantMemberId())
                 .attributes(actor.getAttributes())
                 .build();
     }
-
-    /**
-     * 通过 jwk-set-uri 获取授权服务器公钥（{@link JwkSetJwtVerifier}，带缓存）并校验 token。
-     */
-
 }
